@@ -820,23 +820,10 @@ function validName(s){
 function normName(s){
   return String(s||'').replace(/\s+/g,' ').trim().split(' ').map(w => w.split('-').map(p => p ? p[0].toUpperCase()+p.slice(1).toLowerCase() : p).join('-')).join(' ');
 }
-function profileOk(){ return validName(S.name) && !!S.brand && !!(S.salon||'').trim(); }
-let SALONS = null; // [{brand,salon}] or null if not loaded
-function loadSalons(){
-  if (!API_URL) return;
-  fetch(API_URL + '?action=salons').then(r => r.json()).then(d => {
-    if (d && d.salons && d.salons.length){ SALONS = d.salons; if (S.view==='start') renderStart(); }
-  }).catch(()=>{});
-}
+function profileOk(){ return validName(S.name) && !!S.brand; }
 function renderStart(){
   const started = Object.keys(S.tasks).length>0;
   const nTasks = MODULES.reduce((a,m)=>a+tasksOf(m).length,0);
-  const list = SALONS ? SALONS.filter(x => x.brand===S.brand).map(x=>x.salon) : null;
-  const salonField = (SALONS && S.brand)
-    ? (list.length
-        ? `<select id="sl"><option value="">— выберите салон —</option>${list.map(x=>`<option ${x===S.salon?'selected':''}>${esc(x)}</option>`).join('')}</select>`
-        : `<input id="sl" value="${esc(S.salon||'')}" placeholder="Торговый центр и город">`)
-    : `<input id="sl" value="${esc(S.salon||'')}" placeholder="${S.brand?'Торговый центр и город':'Сначала выберите сеть'}" ${S.brand?'':'disabled'}>`;
   $('#main').innerHTML = `<div class="mod">
    <div class="hero"><div>
     <div class="kicker">Общий стандарт для всех сетей</div>
@@ -854,10 +841,9 @@ function renderStart(){
       <small class="ferr" id="nmErr">${S.name && !validName(S.name) ? 'Укажите фамилию и имя полностью, русскими или латинскими буквами' : ''}</small>
       <small class="fhint">Пишите так же, как в документах: по фамилии и имени считаются ваши попытки и результат.</small></div>
     <div class="field"><label>Ваша сеть</label><div class="brands">${BRANDS.map(b=>`<button data-b="${b}" class="${S.brand===b?'sel':''}">${b}</button>`).join('')}</div></div>
-    <div class="field"><label for="sl">Салон</label>${salonField}</div>
     <div class="row"><button class="btn amber" id="startBtn" ${profileOk()?'':'disabled'}>${started?'Продолжить обучение':'Начать обучение'}</button>
     ${started?'<button class="btn ghost" id="resetBtn">Начать заново</button>':''}</div>
-    <p class="status" id="pfHint" ${profileOk()?'style="display:none"':''}>Заполните фамилию и имя, сеть и салон, чтобы начать.</p>
+    <p class="status" id="pfHint" ${profileOk()?'style="display:none"':''}>Заполните фамилию и имя и выберите сеть, чтобы начать.</p>
    </div>
    <div class="block callout"><b>Документы курса.</b> Основа обучения — <a href="${DOCS_URL}" target="_blank" rel="noopener">Регламент №1.1 «Правила и требования для сотрудников в целях минимизации риска утраты и хищения материальных ценностей» и его краткая версия</a>.
     <div class="row" style="margin-top:12px"><a class="btn ghost sm" href="${DOCS_URL}" target="_blank" rel="noopener" style="text-decoration:none">📄 Открыть регламент и инструкцию</a></div></div>
@@ -866,9 +852,8 @@ function renderStart(){
   $('#nm').oninput = e => { S.name = e.target.value; save(); $('#nmErr').textContent=''; upd(); };
   $('#nm').onblur = e => { const v = normName(e.target.value); e.target.value = v; S.name = v; save();
     $('#nmErr').textContent = v && !validName(v) ? 'Укажите фамилию и имя полностью, русскими или латинскими буквами' : ''; upd(); };
-  const sl = $('#sl'); if (sl){ const h = e => { S.salon = e.target.value.trim(); save(); upd(); }; sl.oninput = h; sl.onchange = h; }
   document.querySelectorAll('.brands button').forEach(b => b.onclick = () => {
-    if (S.brand !== b.dataset.b){ S.brand = b.dataset.b; if (SALONS) S.salon = ''; save(); renderStart(); }
+    if (S.brand !== b.dataset.b){ S.brand = b.dataset.b; save(); renderStart(); }
   });
   $('#startBtn').onclick = () => {
     if (!profileOk()) return;
@@ -887,7 +872,7 @@ function renderStart(){
 function sendEvent(type, extra){
   if (!API_URL || !profileOk()) return;
   const payload = Object.assign({
-    type, name: normName(S.name), brand: S.brand, salon: (S.salon||'').trim(), device: S.device,
+    type, name: normName(S.name), brand: S.brand, salon: '', device: S.device,
     pts: S.pts, modules: MODULES.filter(modDone).length,
     tasks: Object.values(S.tasks).filter(t=>t.done).length, ts: Date.now()
   }, extra||{});
@@ -1165,7 +1150,7 @@ function renderFinal(){
   const missing = MODULES.filter(m=>!modDone(m));
   if (FT) return drawFinalQ();
   if (!profileOk()){
-    $('#main').innerHTML = `<div class="mod"><div class="mhead"><div><div class="kicker">Итоговый тест</div><h2>Сначала представьтесь</h2><p class="lead">Чтобы результат теста засчитался, укажите на стартовой странице фамилию и имя, сеть и салон.</p></div><div class="ill">${ILL.final}</div></div><div class="row"><button class="btn amber" id="toStart">Заполнить данные</button></div></div>`;
+    $('#main').innerHTML = `<div class="mod"><div class="mhead"><div><div class="kicker">Итоговый тест</div><h2>Сначала представьтесь</h2><p class="lead">Чтобы результат теста засчитался, укажите на стартовой странице фамилию и имя и выберите сеть.</p></div><div class="ill">${ILL.final}</div></div><div class="row"><button class="btn amber" id="toStart">Заполнить данные</button></div></div>`;
     $('#toStart').onclick = () => go('start'); return;
   }
   let h = `<div class="mod"><div class="mhead"><div><div class="kicker">Итоговый тест</div><h2>Проверьте себя</h2>
@@ -1218,7 +1203,7 @@ function resultHTML(r){
       <div class="score" style="color:var(--ok)">${r.score} / ${r.total}</div>
       <h3>Стандарты безопасности ювелирного салона</h3>
       <div class="who">${esc(S.name||'Сотрудник')}</div>
-      <p>${S.brand?'Сеть '+esc(S.brand)+' · ':''}${S.salon?esc(S.salon)+' · ':''}${esc(r.date)}${time} · ★ ${S.pts} баллов</p>
+      <p>${S.brand?'Сеть '+esc(S.brand)+' · ':''}${esc(r.date)}${time} · ★ ${S.pts} баллов</p>
       ${API_URL?'<p class="status">✓ Результат передан в общую таблицу обучения.</p>':''}
       <p class="status">Покажите этот экран директору магазина. Следующий шаг — ознакомление с <a href="${DOCS_URL}" target="_blank" rel="noopener">Регламентом №1.1</a> под подпись и практика в салоне.</p></div>`;
   } else {
@@ -1234,7 +1219,6 @@ function resultHTML(r){
 (function(){ const h = location.hash.slice(1); if (VIEWS.includes(h)) S.view = h; })();
 window.addEventListener('hashchange', () => { const h=location.hash.slice(1); if (VIEWS.includes(h) && h!==S.view){ S.view=h; render(); } });
 render();
-loadSalons();
 flushQueue();
 </script>
 </body>
