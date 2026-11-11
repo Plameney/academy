@@ -1,0 +1,1241 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Безопасность ювелирного салона — интерактивное обучение</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400..700&family=Manrope:wght@500..800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#1F2430; --ivory:#F6F3EE; --paper:#FFFDF9; --line:#E2DCD2;
+  --amber:#B35C14; --amber-l:#E8A15C; --blue:#2F5D8A; --sky:#DCE6EF; --muted:#5E6470;
+  --ok:#2E6B4F; --ok-bg:#E6F1EA; --bad:#9B3B2E; --bad-bg:#F6E4E0;
+  --hf:'Manrope','Inter',system-ui,sans-serif; --bf:'Inter',system-ui,-apple-system,'Segoe UI',Arial,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{font-family:var(--bf);background:var(--ivory);color:var(--ink);font-size:17px;line-height:1.55}
+button{font:inherit;cursor:pointer}
+h1,h2,h3{font-family:var(--hf);line-height:1.15;margin:0}
+p{margin:0}
+
+/* ---------- layout ---------- */
+.top{position:sticky;top:0;z-index:20;background:var(--ink);color:var(--ivory);padding:14px 24px;display:flex;align-items:center;gap:20px}
+.top .brand{font-family:var(--hf);font-weight:700;font-size:17px;white-space:nowrap}
+.top .brand small{display:block;font-family:var(--bf);font-weight:400;font-size:12px;color:#B9BCC4;letter-spacing:.5px}
+.prog{flex:1;display:flex;align-items:center;gap:12px;min-width:120px}
+.bar{flex:1;height:8px;background:#3A4050;border-radius:4px;overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:var(--amber-l);transition:width .5s}
+.prog span{font-size:13px;color:#D9DBE0;white-space:nowrap}
+.pts{display:flex;align-items:center;gap:6px;background:#2C3242;border-radius:20px;padding:6px 14px;font-weight:700;font-size:14px;white-space:nowrap;position:relative}
+.pts .st{color:var(--amber-l)}
+.pts.bump{animation:bump .5s}
+@keyframes bump{40%{transform:scale(1.18)}}
+.menu-btn{display:none;background:none;border:1px solid #4A5060;color:var(--ivory);border-radius:8px;padding:6px 12px}
+.wrap{display:flex;max-width:1280px;margin:0 auto}
+nav{width:290px;flex-shrink:0;padding:24px 16px;position:sticky;top:64px;align-self:flex-start;max-height:calc(100vh - 64px);overflow:auto}
+nav button{display:flex;gap:12px;align-items:flex-start;width:100%;text-align:left;background:none;border:none;border-radius:10px;padding:10px 12px;color:var(--ink);font-size:15px;line-height:1.35}
+nav button:hover{background:#EDE8E0}
+nav button.cur{background:var(--paper);box-shadow:0 0 0 1px var(--line)}
+nav .n{flex-shrink:0;width:26px;height:26px;border-radius:13px;border:2px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--muted)}
+nav button.done .n{background:var(--ok);border-color:var(--ok);color:#fff}
+nav button.cur .n{border-color:var(--amber)}
+main{flex:1;min-width:0;padding:32px 32px 80px}
+.mod{max-width:840px;animation:fadeUp .45s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+.mhead{display:grid;grid-template-columns:1fr 300px;gap:28px;align-items:center;margin-bottom:28px}
+.mhead .ill{background:var(--paper);border:1px solid var(--line);border-radius:20px;padding:10px}
+.ill svg{display:block;width:100%;height:auto}
+.kicker{font-size:13px;font-weight:700;letter-spacing:2.5px;color:var(--amber);text-transform:uppercase;margin-bottom:10px}
+.mhead h2{font-size:38px;margin-bottom:12px}
+.lead{font-size:19px;color:#3A4050}
+.block{margin:0 0 28px}
+.block>h3{font-size:22px;margin-bottom:14px}
+
+/* ---------- content blocks ---------- */
+.steps{list-style:none;margin:0;padding:0;display:grid;gap:12px}
+.steps li{display:flex;gap:14px;align-items:flex-start;background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:14px 18px;opacity:0;transform:translateX(-10px);animation:slideIn .4s ease forwards}
+@keyframes slideIn{to{opacity:1;transform:none}}
+.steps .num{flex-shrink:0;width:30px;height:30px;border-radius:15px;background:var(--ink);color:var(--ivory);font-family:var(--hf);font-weight:700;font-size:14px;display:flex;align-items:center;justify-content:center}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}
+.card{background:var(--paper);border:1px solid var(--line);border-top:5px solid var(--blue);border-radius:12px;padding:20px 22px;transition:transform .2s, box-shadow .2s}
+.card:hover{transform:translateY(-3px);box-shadow:0 8px 20px rgba(31,36,48,.08)}
+.card.a{border-top-color:var(--amber)}
+.card h4{font-family:var(--hf);font-size:18px;margin:0 0 8px;color:var(--blue)}
+.card.a h4{color:var(--amber)}
+.card ul{margin:0;padding-left:20px}
+.card li{margin:4px 0}
+.callout{background:var(--paper);border-left:6px solid var(--amber);border-radius:8px;padding:16px 20px}
+.callout b{color:var(--amber)}
+.callout a,.status a{color:var(--blue);font-weight:600}
+.script{font-style:italic}
+.statement{background:var(--ink);color:var(--ivory);border-radius:16px;padding:32px;display:grid;grid-template-columns:1fr 150px;gap:24px;align-items:center}
+.statement h3{font-size:28px;margin-bottom:10px}
+.statement p{color:#D9DBE0}
+details.more{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:14px 18px}
+details.more summary{cursor:pointer;font-weight:600;color:var(--blue)}
+details.more div{margin-top:10px}
+
+/* flip cards */
+.flips{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px}
+.flip{perspective:900px;height:190px;background:none;border:none;padding:0;text-align:left}
+.flip .in{position:relative;width:100%;height:100%;transition:transform .6s;transform-style:preserve-3d}
+.flip.on .in{transform:rotateY(180deg)}
+.flip .f,.flip .b{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:14px;padding:18px;display:flex;flex-direction:column;justify-content:space-between}
+.flip .f{background:var(--paper);border:1px solid var(--line)}
+.flip .f .ic{font-size:34px}
+.flip .f h4{font-family:var(--hf);font-size:18px;margin:0}
+.flip .f small{color:var(--muted);font-size:13px}
+.flip .b{background:var(--blue);color:#fff;transform:rotateY(180deg);font-size:15px;line-height:1.45;justify-content:center}
+
+/* ---------- tasks ---------- */
+.task{background:#fff;border:2px solid var(--ink);border-radius:16px;padding:24px;margin:0 0 28px;position:relative}
+.task.solved{border-color:var(--ok)}
+.task .tl{font-size:12px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--blue);margin-bottom:8px;display:flex;justify-content:space-between;gap:10px}
+.task .tl em{font-style:normal;color:var(--amber)}
+.task .q{font-family:var(--hf);font-weight:700;font-size:20px;margin-bottom:6px}
+.task .hint{font-size:14px;color:var(--muted);margin-bottom:14px}
+.opts{display:grid;gap:10px}
+.opt{display:flex;gap:12px;align-items:flex-start;text-align:left;background:var(--ivory);border:2px solid transparent;border-radius:10px;padding:12px 16px;color:var(--ink);transition:border-color .15s, transform .15s}
+.opt:hover:not([disabled]){border-color:var(--line);transform:translateX(3px)}
+.opt .box{flex-shrink:0;width:22px;height:22px;border-radius:6px;border:2px solid #9AA0AA;margin-top:2px}
+.opt.radio .box{border-radius:11px}
+.opt.sel{border-color:var(--blue)}
+.opt.sel .box{background:var(--blue);border-color:var(--blue)}
+.opt.right{background:var(--ok-bg);border-color:var(--ok)}
+.opt.wrong{background:var(--bad-bg);border-color:var(--bad);animation:shake .4s}
+.opt.missed{border-color:var(--ok);border-style:dashed}
+.opt[disabled]{cursor:default}
+@keyframes shake{20%,60%{transform:translateX(-5px)}40%,80%{transform:translateX(5px)}}
+.row{display:flex;gap:12px;align-items:center;margin-top:16px;flex-wrap:wrap}
+.btn{background:var(--ink);color:var(--ivory);border:none;border-radius:10px;padding:12px 22px;font-weight:600;transition:transform .15s}
+.btn:hover:not(:disabled){transform:translateY(-1px)}
+.btn:disabled{opacity:.35;cursor:default}
+.btn.ghost{background:none;color:var(--ink);border:2px solid var(--ink)}
+.btn.amber{background:var(--amber)}
+.btn.sm{padding:8px 14px;font-size:15px}
+.fb{margin-top:16px;border-radius:10px;padding:14px 18px;display:none}
+.fb.show{display:block;animation:fadeUp .3s}
+.fb.ok{background:var(--ok-bg);color:#1E4A36}
+.fb.no{background:var(--bad-bg);color:#6E2A20}
+.fb b{display:block;margin-bottom:4px}
+/* ordering */
+.pool,.placed{display:grid;gap:8px}
+.placed{margin-bottom:14px;min-height:20px}
+.placed .it{background:#EEF3F8;border-color:var(--blue)}
+.it{display:flex;gap:12px;align-items:center;text-align:left;background:var(--ivory);border:2px solid transparent;border-radius:10px;padding:10px 14px;color:var(--ink);animation:fadeUp .25s}
+.it .k{flex-shrink:0;width:26px;height:26px;border-radius:13px;background:var(--blue);color:#fff;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center}
+.pool .it .k{background:#C9CDD4}
+.it.right{background:var(--ok-bg);border-color:var(--ok)}
+.it.wrong{background:var(--bad-bg);border-color:var(--bad)}
+.sub{font-size:13px;color:var(--muted);margin:4px 0 8px;font-weight:600;letter-spacing:.5px;text-transform:uppercase}
+/* sort / true-false */
+.srt{display:grid;gap:10px}
+.srt .itm{background:var(--ivory);border-radius:12px;padding:14px 16px;display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center;transition:background .2s}
+.srt .itm.r{background:var(--ok-bg)} .srt .itm.w{background:var(--bad-bg)}
+.srt .itm .ex{grid-column:1/-1;font-size:14px;color:#3A4050;display:none}
+.srt .itm.r .ex,.srt .itm.w .ex{display:block;animation:fadeUp .3s}
+.srt .ch{display:flex;gap:8px}
+.srt .ch button{border:2px solid var(--ink);background:#fff;border-radius:8px;padding:6px 12px;font-size:14px;font-weight:600;white-space:nowrap}
+.srt .ch button.pick{background:var(--ink);color:#fff}
+.srt .ch button[disabled]{cursor:default;opacity:.85}
+/* spot the violations */
+.scene{position:relative;border-radius:14px;overflow:hidden;border:1px solid var(--line);user-select:none}
+.scene svg{display:block;width:100%;height:auto}
+.scene .hs{cursor:pointer}
+.scene .dec{cursor:pointer}
+.found-ring{fill:none;stroke:#B35C14;stroke-width:5;animation:ringIn .45s ease}
+@keyframes ringIn{from{opacity:0;transform:scale(1.6)}to{opacity:1;transform:scale(1)}}
+.found-ring,.found-n{transform-box:fill-box;transform-origin:center}
+.found-n{font:700 20px var(--hf);fill:#fff}
+.found-b{fill:#B35C14}
+.spotlist{display:grid;gap:8px;margin-top:14px;counter-reset:s}
+.spotlist div{background:var(--ok-bg);border-radius:8px;padding:8px 12px;font-size:15px;animation:fadeUp .3s}
+.spotlist div.miss{background:var(--bad-bg)}
+.toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%) translateY(20px);background:var(--ink);color:#fff;padding:10px 18px;border-radius:10px;font-size:15px;opacity:0;transition:all .3s;z-index:50;pointer-events:none;max-width:90vw}
+.toast.on{opacity:1;transform:translateX(-50%)}
+.plus{position:fixed;z-index:60;font:800 22px var(--hf);color:var(--amber);pointer-events:none;animation:plusUp 1.1s ease forwards}
+@keyframes plusUp{from{opacity:1;transform:translateY(0)}to{opacity:0;transform:translateY(-60px)}}
+/* scenario */
+.scn .story{background:var(--ivory);border-radius:12px;padding:16px 18px;margin-bottom:14px;animation:fadeUp .35s}
+.scn .story .who{font-size:12px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--amber);margin-bottom:4px}
+.scn .log{display:grid;gap:8px;margin-bottom:14px}
+.scn .log div{font-size:15px;padding:8px 12px;border-left:4px solid var(--ok);background:var(--ok-bg);border-radius:6px}
+.dots{display:flex;gap:6px;margin-bottom:12px}
+.dots i{width:28px;height:6px;border-radius:3px;background:var(--line)}
+.dots i.d{background:var(--ok)} .dots i.c{background:var(--amber)}
+/* kts trainer */
+.kts{display:grid;grid-template-columns:220px 1fr;gap:24px;align-items:center}
+.fobbtn{background:none;border:none;padding:0;width:100%}
+.fobbtn svg{width:100%;height:auto;display:block}
+.fobbtn:active .core{transform:scale(.9)}
+.core{transform-box:fill-box;transform-origin:center;transition:transform .1s}
+.wave{fill:none;stroke:#B35C14;stroke-width:4;stroke-linecap:round;opacity:0}
+.kts.go .wave{animation:wv 1.2s ease-out 3}
+.kts.go .wave.w2{animation-delay:.2s}.kts.go .wave.w3{animation-delay:.4s}
+@keyframes wv{0%{opacity:0}30%{opacity:1}100%{opacity:0}}
+.led{fill:#5b1f18}
+.kts.go .led{fill:#E5483A;animation:blink .4s 6}
+.tline{display:grid;gap:10px}
+.tline div{display:flex;gap:12px;align-items:center;opacity:.3;transition:opacity .4s}
+.tline div.on{opacity:1}
+.tline span.k{width:30px;height:30px;flex-shrink:0;border-radius:15px;background:var(--blue);color:#fff;font-weight:700;font-size:14px;display:flex;align-items:center;justify-content:center}
+/* checklist */
+.chk{display:grid;grid-template-columns:1fr 240px;gap:24px;align-items:start}
+.chk label{display:flex;gap:12px;align-items:flex-start;background:var(--ivory);border-radius:10px;padding:10px 14px;margin-bottom:8px;cursor:pointer;transition:background .2s}
+.chk label.on{background:var(--ok-bg)}
+.chk input{width:20px;height:20px;margin-top:2px;accent-color:var(--ok);flex-shrink:0}
+#shutter{transition:transform .6s ease}
+
+.navrow{display:flex;justify-content:space-between;gap:12px;margin-top:40px;padding-top:24px;border-top:1px solid var(--line)}
+.status{font-size:14px;color:var(--muted);margin-top:10px}
+
+/* start + final */
+.hero{background:var(--ink);color:var(--ivory);border-radius:20px;padding:40px;display:grid;grid-template-columns:1fr 280px;gap:24px;align-items:center}
+.hero h1{font-size:44px;margin:6px 0 16px}
+.hero p{color:#D9DBE0;font-size:18px}
+.hero .kicker{color:var(--amber-l)}
+.field{display:grid;gap:6px;margin-top:18px}
+.field label{font-size:14px;font-weight:600}
+.ferr{color:var(--bad);font-size:13px;min-height:0}
+.fhint{color:var(--muted);font-size:13px}
+.field select{font:inherit;padding:12px 14px;border-radius:10px;border:1px solid var(--line);background:#fff;max-width:420px}
+.field input:disabled{background:#EEE}
+.field input{font:inherit;padding:12px 14px;border-radius:10px;border:1px solid var(--line);background:#fff;max-width:420px}
+.brands{display:flex;gap:10px;flex-wrap:wrap}
+.brands button{background:var(--paper);border:2px solid var(--line);border-radius:10px;padding:10px 18px;font-weight:600}
+.brands button.sel{border-color:var(--amber);background:#FBEFE3}
+.meta{display:flex;gap:28px;flex-wrap:wrap;margin-top:24px}
+.meta div b{display:block;font-family:var(--hf);font-size:26px;color:var(--amber-l)}
+.meta div{font-size:14px;color:#D9DBE0}
+.score{font-family:var(--hf);font-size:64px;font-weight:800}
+.cert{background:var(--paper);border:2px solid var(--ink);border-radius:20px;padding:40px;text-align:center}
+.cert h3{font-size:30px;margin:10px 0}
+.cert .who{font-family:var(--hf);font-size:28px;font-weight:700;margin:16px 0 4px}
+.cert .ill{max-width:220px;margin:0 auto}
+.review{display:grid;gap:12px;margin-top:18px}
+.review .r{background:var(--paper);border:1px solid var(--line);border-left:6px solid var(--bad);border-radius:10px;padding:14px 18px}
+.review .r small{display:block;color:var(--muted)}
+.timer{font-family:var(--hf);font-weight:700;color:var(--muted);font-size:15px}
+
+/* ---------- illustration animations ---------- */
+.a-float{animation:float 4s ease-in-out infinite}
+@keyframes float{50%{transform:translateY(-8px)}}
+.a-pulse{transform-box:fill-box;transform-origin:center;animation:pulse 2.6s ease-out infinite;opacity:0}
+.a-pulse.d2{animation-delay:1.3s}
+@keyframes pulse{0%{opacity:.55;transform:scale(.85)}100%{opacity:0;transform:scale(1.6)}}
+.a-draw{stroke-dasharray:120;stroke-dashoffset:120;animation:draw 3.2s ease infinite}
+@keyframes draw{0%{stroke-dashoffset:120}35%,85%{stroke-dashoffset:0}100%{stroke-dashoffset:0;opacity:0}}
+.a-blink{animation:blink 1.4s steps(1) infinite}
+@keyframes blink{50%{opacity:.15}}
+.a-shutter{animation:shut 6s ease-in-out infinite}
+@keyframes shut{0%,15%{transform:translateY(0)}45%,75%{transform:translateY(-118px)}100%{transform:translateY(0)}}
+.a-sun{transform-box:fill-box;transform-origin:center;animation:spin 14s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.a-wave{opacity:0;animation:wv 1.8s ease-out infinite}
+.a-wave.d2{animation-delay:.3s}.a-wave.d3{animation-delay:.6s}
+.a-pop{transform-box:fill-box;transform-origin:center;animation:pop 6s ease infinite;opacity:0}
+.a-pop.d2{animation-delay:.6s}.a-pop.d3{animation-delay:1.2s}
+@keyframes pop{0%{opacity:0;transform:scale(.3)}8%,70%{opacity:1;transform:scale(1)}80%,100%{opacity:0;transform:scale(.3)}}
+.a-note{animation:note 4s ease-in-out infinite}
+@keyframes note{0%{transform:translateX(-120px)}40%,70%{transform:translateX(0)}100%{transform:translateX(0);opacity:0}}
+.a-scan{animation:scan 2s ease-in-out infinite alternate}
+@keyframes scan{from{transform:translateX(0)}to{transform:translateX(110px)}}
+.a-look{animation:look 5s ease-in-out infinite}
+@keyframes look{0%,10%{transform:translateX(0)}25%,40%{transform:translateX(-16px)}55%,70%{transform:translateX(16px)}85%,100%{transform:translateX(0)}}
+.a-lid{transform-box:fill-box;transform-origin:center;animation:lid 5s ease-in-out infinite}
+@keyframes lid{0%,8%,92%,100%{transform:scaleY(1)}4%{transform:scaleY(.1)}}
+.a-shake{transform-box:fill-box;transform-origin:center;animation:ring 1.6s ease-in-out infinite}
+@keyframes ring{0%,50%,100%{transform:rotate(0)}5%,15%,25%{transform:rotate(-8deg)}10%,20%,30%{transform:rotate(8deg)}}
+.a-arrow{animation:arr 1.6s ease-in-out infinite}
+@keyframes arr{0%{transform:translateX(-10px);opacity:0}30%,70%{opacity:1}100%{transform:translateX(24px);opacity:0}}
+.a-bob{animation:float 3s ease-in-out infinite}
+.a-dial{transform-box:fill-box;transform-origin:center;animation:dial 5s ease-in-out infinite}
+@keyframes dial{0%{transform:rotate(0)}30%{transform:rotate(200deg)}55%{transform:rotate(80deg)}80%,100%{transform:rotate(300deg)}}
+.a-tw{animation:tw 2.4s ease-in-out infinite}
+.a-tw.d2{animation-delay:.8s}.a-tw.d3{animation-delay:1.6s}
+@keyframes tw{0%,100%{opacity:.2}50%{opacity:1}}
+.a-cam{transform-box:fill-box;transform-origin:15% 50%;animation:cam 6s ease-in-out infinite}
+@keyframes cam{0%,100%{transform:rotate(-10deg)}50%{transform:rotate(12deg)}}
+.a-beam{transform-box:fill-box;transform-origin:0% 50%;animation:cam 6s ease-in-out infinite}
+.a-spark{transform-box:fill-box;transform-origin:center;animation:spark 2.2s ease-in-out infinite}
+.a-spark.d2{animation-delay:.7s}.a-spark.d3{animation-delay:1.4s}
+@keyframes spark{0%,100%{opacity:0;transform:scale(.3) rotate(0)}50%{opacity:1;transform:scale(1) rotate(45deg)}}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}.a-pulse,.a-pop,.a-wave,.steps li{opacity:1}}
+
+@media (max-width:900px){
+  nav{position:fixed;top:56px;left:0;bottom:0;background:var(--ivory);z-index:15;transform:translateX(-100%);transition:transform .25s;box-shadow:4px 0 20px rgba(0,0,0,.08);max-height:none}
+  nav.open{transform:none}
+  .menu-btn{display:block}
+  main{padding:22px 16px 60px}
+  .cols,.mhead,.hero,.kts,.chk,.statement{grid-template-columns:1fr}
+  .mhead .ill{max-width:340px}
+  .mhead h2{font-size:30px}
+  .hero{padding:28px}.hero h1{font-size:32px}
+  .top{padding:12px 14px;gap:12px}
+  .top .brand{font-size:15px}
+  .top .brand small{display:none}
+  .prog{min-width:40px}
+  .prog span{display:none}
+  .srt .itm{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<header class="top">
+  <button class="menu-btn" id="menuBtn" aria-label="Меню">☰</button>
+  <div class="brand">Безопасность салона<small>Соколов · МЮЗ · Сенат · Пламенея</small></div>
+  <div class="prog"><div class="bar"><i id="barFill"></i></div><span id="progTxt">0%</span></div>
+  <div class="pts" id="pts" title="Баллы за верные ответы"><span class="st">★</span><span id="ptsN">0</span></div>
+</header>
+<div class="wrap">
+  <nav id="nav"></nav>
+  <main id="main"></main>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ======================= ILLUSTRATIONS ======================= */
+const K = '#1F2430', A = '#B35C14', AL = '#E8A15C', B = '#2F5D8A', SKY = '#DCE6EF', P = '#FFFDF9', IV = '#F6F3EE';
+const svg = (inner, vb='0 0 360 240') => `<svg viewBox="${vb}" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">${inner}</svg>`;
+const ILL = {
+start: svg(`
+  <circle cx="180" cy="120" r="70" fill="${SKY}" opacity=".5"/>
+  <g class="a-float">
+   <circle cx="180" cy="140" r="46" fill="none" stroke="${AL}" stroke-width="10"/>
+   <path d="M156 88 L180 64 L204 88 L180 106 Z" fill="${SKY}" stroke="${K}" stroke-width="4" stroke-linejoin="round"/>
+   <path d="M156 88 H204 M170 88 L180 64 L190 88 L180 106" fill="none" stroke="${K}" stroke-width="2.5"/>
+  </g>
+  <path class="a-spark" d="M92 70 l5 12 12 5 -12 5 -5 12 -5 -12 -12 -5 12 -5z" fill="${AL}"/>
+  <path class="a-spark d2" d="M268 56 l4 9 9 4 -9 4 -4 9 -4 -9 -9 -4 9 -4z" fill="${P}"/>
+  <path class="a-spark d3" d="M262 170 l5 11 11 5 -11 5 -5 11 -5 -11 -11 -5 11 -5z" fill="${AL}"/>`),
+intro: svg(`
+  <circle class="a-pulse" cx="180" cy="120" r="70" fill="none" stroke="${B}" stroke-width="4"/>
+  <circle class="a-pulse d2" cx="180" cy="120" r="70" fill="none" stroke="${B}" stroke-width="4"/>
+  <path d="M180 38 L242 60 V114 C242 156 214 184 180 198 C146 184 118 156 118 114 V60 Z" fill="${P}" stroke="${K}" stroke-width="5" stroke-linejoin="round"/>
+  <path class="a-draw" d="M150 118 L172 140 L212 98" fill="none" stroke="${A}" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>`),
+opening: svg(`
+  <g class="a-sun"><circle cx="300" cy="46" r="16" fill="${AL}"/><path d="M300 18v-8M300 82v-8M272 46h-8M336 46h-8M281 27l-6-6M325 71l-6-6M281 65l-6 6M325 21l-6 6" stroke="${AL}" stroke-width="4" stroke-linecap="round"/></g>
+  <rect x="70" y="40" width="200" height="22" rx="4" fill="${K}"/>
+  <rect x="80" y="62" width="180" height="140" fill="${IV}" stroke="${K}" stroke-width="4"/>
+  <rect x="100" y="140" width="140" height="50" fill="${P}" stroke="${K}" stroke-width="3"/>
+  <rect x="100" y="112" width="140" height="28" fill="${SKY}" stroke="${K}" stroke-width="3"/>
+  <circle cx="130" cy="128" r="6" fill="none" stroke="${A}" stroke-width="3"/><circle cx="170" cy="128" r="6" fill="none" stroke="${A}" stroke-width="3"/><circle cx="210" cy="128" r="6" fill="none" stroke="${A}" stroke-width="3"/>
+  <clipPath id="cpo"><rect x="80" y="62" width="180" height="140"/></clipPath>
+  <g clip-path="url(#cpo)"><g class="a-shutter">${Array.from({length:12},(_,i)=>`<rect x="80" y="${62+i*12}" width="180" height="12" fill="#9AA0AA" stroke="#7D838E" stroke-width="2"/>`).join('')}</g></g>
+  <rect x="40" y="202" width="280" height="8" rx="4" fill="${K}"/>`),
+kts: svg(`
+  <g transform="rotate(-12 150 130)">
+   <rect x="100" y="70" width="100" height="130" rx="30" fill="${K}"/>
+   <circle cx="150" cy="122" r="30" fill="${A}"/><circle cx="150" cy="122" r="20" fill="${AL}"/>
+   <circle class="a-blink" cx="150" cy="176" r="6" fill="#E5483A"/>
+   <rect x="138" y="50" width="24" height="24" rx="12" fill="none" stroke="${K}" stroke-width="5"/>
+  </g>
+  <path class="a-wave" d="M222 92 a40 40 0 0 1 0 60" fill="none" stroke="${A}" stroke-width="6" stroke-linecap="round"/>
+  <path class="a-wave d2" d="M242 76 a64 64 0 0 1 0 92" fill="none" stroke="${A}" stroke-width="6" stroke-linecap="round"/>
+  <path class="a-wave d3" d="M262 60 a88 88 0 0 1 0 124" fill="none" stroke="${A}" stroke-width="6" stroke-linecap="round"/>`),
+showing: svg(`
+  <rect x="50" y="150" width="260" height="60" fill="${P}" stroke="${K}" stroke-width="4"/>
+  <rect x="50" y="100" width="260" height="50" fill="${SKY}" stroke="${K}" stroke-width="4"/>
+  <rect x="90" y="78" width="180" height="22" rx="5" fill="${K}"/>
+  <g class="a-pop"><circle cx="130" cy="66" r="13" fill="none" stroke="${A}" stroke-width="5"/><path d="M130 47 l6 6 -6 6 -6 -6z" fill="${B}"/></g>
+  <g class="a-pop d2"><circle cx="180" cy="66" r="13" fill="none" stroke="${A}" stroke-width="5"/><path d="M180 47 l6 6 -6 6 -6 -6z" fill="${B}"/></g>
+  <g class="a-pop d3"><circle cx="230" cy="66" r="13" fill="none" stroke="${A}" stroke-width="5"/><path d="M230 47 l6 6 -6 6 -6 -6z" fill="${B}"/></g>
+  <text x="180" y="232" text-anchor="middle" font-family="Manrope,Inter,sans-serif" font-weight="800" font-size="18" fill="${K}">не больше трёх</text>`),
+cash: svg(`
+  <rect x="60" y="130" width="240" height="70" rx="10" fill="${K}"/>
+  <rect x="80" y="118" width="200" height="14" rx="4" fill="#3A4050"/>
+  <g class="a-note"><rect x="110" y="66" width="140" height="62" rx="6" fill="#CFE3D3" stroke="${K}" stroke-width="3"/><circle cx="180" cy="97" r="16" fill="none" stroke="${K}" stroke-width="3"/><text x="180" y="103" text-anchor="middle" font-family="Manrope,sans-serif" font-weight="800" font-size="16" fill="${K}">₽</text></g>
+  <g class="a-scan"><rect x="84" y="140" width="8" height="50" rx="4" fill="#8FB3E0"/></g>
+  <circle class="a-blink" cx="276" cy="165" r="9" fill="#4CAF7A"/>`),
+hall: svg(`
+  <path d="M60 120 C110 50 250 50 300 120 C250 190 110 190 60 120 Z" fill="${P}" stroke="${K}" stroke-width="5"/>
+  <g class="a-look"><circle cx="180" cy="120" r="38" fill="${B}"/><circle cx="180" cy="120" r="16" fill="${K}"/><circle cx="190" cy="110" r="6" fill="#fff"/></g>
+  <g class="a-lid"><path d="M60 120 C110 50 250 50 300 120" fill="none" stroke="${K}" stroke-width="5"/></g>
+  <path d="M110 46 l-12 -18 M180 36 V14 M250 46 l12 -18" stroke="${A}" stroke-width="5" stroke-linecap="round"/>`),
+incidents: svg(`
+  <g class="a-shake"><rect x="130" y="40" width="100" height="170" rx="18" fill="${K}"/><rect x="142" y="58" width="76" height="120" rx="6" fill="${IV}"/>
+  <text x="180" y="128" text-anchor="middle" font-family="Manrope,sans-serif" font-weight="800" font-size="34" fill="${A}">112</text>
+  <circle cx="180" cy="194" r="7" fill="#3A4050"/></g>
+  <path class="a-wave" d="M100 90 a30 30 0 0 0 0 60" fill="none" stroke="${A}" stroke-width="5" stroke-linecap="round"/>
+  <path class="a-wave d2" d="M82 74 a54 54 0 0 0 0 92" fill="none" stroke="${A}" stroke-width="5" stroke-linecap="round"/>
+  <path class="a-wave" d="M260 90 a30 30 0 0 1 0 60" fill="none" stroke="${A}" stroke-width="5" stroke-linecap="round"/>
+  <path class="a-wave d2" d="M278 74 a54 54 0 0 1 0 92" fill="none" stroke="${A}" stroke-width="5" stroke-linecap="round"/>`),
+emergency: svg(`
+  <rect x="70" y="40" width="130" height="170" fill="${P}" stroke="${K}" stroke-width="5"/>
+  <rect x="88" y="58" width="94" height="152" fill="#CFE3D3" stroke="${K}" stroke-width="3"/>
+  <circle cx="170" cy="138" r="5" fill="${K}"/>
+  <rect x="96" y="14" width="78" height="22" rx="4" fill="#2E6B4F"/><text x="135" y="30" text-anchor="middle" font-family="Inter,sans-serif" font-weight="700" font-size="13" fill="#fff">ВЫХОД</text>
+  <g class="a-arrow"><path d="M226 125 H290 M272 105 L292 125 L272 145" fill="none" stroke="#2E6B4F" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/></g>`),
+goods: svg(`
+  <g class="a-bob"><rect x="60" y="100" width="140" height="100" fill="#E6CFA8" stroke="${K}" stroke-width="4"/><path d="M60 100 L90 70 H230 L200 100 M200 100 L230 70 V170 L200 200" fill="#D8BC8E" stroke="${K}" stroke-width="4" stroke-linejoin="round"/>
+  <rect x="112" y="100" width="36" height="100" fill="${AL}" opacity=".7"/><circle cx="130" cy="150" r="12" fill="${A}"/></g>
+  <rect x="236" y="70" width="90" height="130" rx="8" fill="${P}" stroke="${K}" stroke-width="4"/><rect x="262" y="62" width="38" height="16" rx="4" fill="${K}"/>
+  ${[100,130,160].map((y,i)=>`<path class="a-draw" style="animation-delay:${i*.4}s" d="M250 ${y} l8 8 14 -16" fill="none" stroke="#2E6B4F" stroke-width="5" stroke-linecap="round"/><rect x="282" y="${y-2}" width="32" height="6" rx="3" fill="#C9CDD4"/>`).join('')}`),
+closing: svg(`
+  <path d="M290 40 a26 26 0 1 0 22 36 a20 20 0 1 1 -22 -36z" fill="${AL}"/>
+  <circle class="a-tw" cx="60" cy="40" r="4" fill="${AL}"/><circle class="a-tw d2" cx="110" cy="24" r="3" fill="${AL}"/><circle class="a-tw d3" cx="240" cy="28" r="3" fill="${AL}"/>
+  <rect x="100" y="60" width="160" height="150" rx="12" fill="#3A4050" stroke="${K}" stroke-width="5"/>
+  <rect x="116" y="76" width="128" height="118" rx="6" fill="#4A5262"/>
+  <g class="a-dial"><circle cx="180" cy="135" r="30" fill="${IV}" stroke="${K}" stroke-width="4"/><path d="M180 109 V122" stroke="${A}" stroke-width="5" stroke-linecap="round"/></g>
+  <rect x="226" y="120" width="10" height="30" rx="4" fill="${AL}"/>`),
+fraud: svg(`
+  <g class="a-shake"><rect x="80" y="40" width="96" height="168" rx="16" fill="${K}"/><rect x="91" y="58" width="74" height="118" rx="6" fill="${IV}"/>
+  <circle cx="128" cy="96" r="16" fill="#C9CDD4"/><text x="128" y="102" text-anchor="middle" font-family="Manrope,sans-serif" font-weight="800" font-size="18" fill="${K}">?</text>
+  <rect x="104" y="124" width="48" height="8" rx="4" fill="#C9CDD4"/><circle cx="110" cy="156" r="9" fill="#E5483A"/><circle cx="146" cy="156" r="9" fill="#4CAF7A"/></g>
+  <g class="a-blink"><path d="M260 70 L310 160 H210 Z" fill="${AL}" stroke="${K}" stroke-width="5" stroke-linejoin="round"/><path d="M260 102 V132" stroke="${K}" stroke-width="7" stroke-linecap="round"/><circle cx="260" cy="146" r="4.5" fill="${K}"/></g>`),
+responsibility: svg(`
+  <rect x="40" y="36" width="14" height="70" fill="${K}"/><rect x="40" y="36" width="60" height="12" fill="${K}"/>
+  <g class="a-beam"><path d="M150 92 L330 40 V200 Z" fill="${SKY}" opacity=".6"/></g>
+  <g class="a-cam"><rect x="80" y="64" width="110" height="56" rx="10" fill="${P}" stroke="${K}" stroke-width="5"/><rect x="186" y="78" width="22" height="30" rx="4" fill="${K}"/><circle class="a-blink" cx="102" cy="82" r="7" fill="#E5483A"/></g>
+  <text x="250" y="210" text-anchor="middle" font-family="Manrope,sans-serif" font-weight="800" font-size="16" fill="${K}">REC</text>`),
+final: svg(`
+  <g class="a-float"><circle cx="180" cy="104" r="62" fill="${AL}" stroke="${K}" stroke-width="5"/><circle cx="180" cy="104" r="44" fill="none" stroke="${K}" stroke-width="3" stroke-dasharray="6 6"/>
+  <path d="M180 74 l9 19 21 3 -15 14 4 21 -19 -10 -19 10 4 -21 -15 -14 21 -3z" fill="${P}" stroke="${K}" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M146 158 L130 214 L154 202 L166 222 L178 166 M214 158 L230 214 L206 202 L194 222 L182 166" fill="${B}" stroke="${K}" stroke-width="4" stroke-linejoin="round"/></g>
+  <path class="a-spark" d="M80 60 l5 12 12 5 -12 5 -5 12 -5 -12 -12 -5 12 -5z" fill="${AL}"/>
+  <path class="a-spark d2" d="M282 150 l5 12 12 5 -12 5 -5 12 -5 -12 -12 -5 12 -5z" fill="${AL}"/>`)
+};
+ILL.statement = svg(`<circle cx="75" cy="75" r="60" fill="none" stroke="${AL}" stroke-width="6"/><path class="a-pulse" d="M75 15 a60 60 0 1 1 -0.1 0" fill="none" stroke="${AL}" stroke-width="4"/><path d="M75 112 C40 88 30 68 42 52 C54 38 70 44 75 56 C80 44 96 38 108 52 C120 68 110 88 75 112Z" fill="${AL}"/>`, '0 0 150 150');
+
+/* spot-the-violation scene */
+const SCENE = `<svg viewBox="0 0 800 420" xmlns="http://www.w3.org/2000/svg">
+ <rect width="800" height="420" fill="#EFE9E0"/><rect y="340" width="800" height="80" fill="#E2DCD2"/>
+ <rect x="40" y="134" width="720" height="8" rx="4" fill="#D6CEC2"/>
+ <g class="dec" data-d="Зеркало на месте — здесь нарушений нет"><rect x="70" y="26" width="90" height="104" rx="45" fill="${SKY}" stroke="${K}" stroke-width="3"/><path d="M95 60 l20 -20 M100 80 l30 -30" stroke="#fff" stroke-width="4" stroke-linecap="round"/></g>
+ <g class="dec" data-d="Часы — здесь всё в порядке"><circle cx="400" cy="74" r="38" fill="${P}" stroke="${K}" stroke-width="3"/><path d="M400 74 V50 M400 74 L418 84" stroke="${K}" stroke-width="4" stroke-linecap="round"/></g>
+ <g class="dec" data-d="Растение — нарушений нет"><rect x="672" y="98" width="40" height="36" rx="4" fill="${A}"/><path d="M692 98 C680 72 670 62 676 42 M692 98 C700 72 712 64 708 46 M692 98 V54" stroke="#2E6B4F" stroke-width="5" fill="none" stroke-linecap="round"/></g>
+ <!-- left vitrine -->
+ <rect x="60" y="270" width="240" height="70" fill="${P}" stroke="${K}" stroke-width="3"/>
+ <rect x="60" y="202" width="240" height="68" fill="${SKY}" fill-opacity=".7" stroke="${K}" stroke-width="3"/>
+ <circle cx="110" cy="246" r="7" fill="none" stroke="${A}" stroke-width="3"/><circle cx="250" cy="246" r="7" fill="none" stroke="${A}" stroke-width="3"/>
+ <circle cx="180" cy="300" r="5" fill="${K}"/>
+ <g class="hs" data-v="key"><rect x="160" y="290" width="40" height="52" fill="transparent"/><line x1="180" y1="300" x2="180" y2="320" stroke="${A}" stroke-width="5"/><circle cx="180" cy="329" r="9" fill="none" stroke="${A}" stroke-width="5"/></g>
+ <g class="hs" data-v="tray"><rect x="88" y="160" width="184" height="42" fill="transparent"/><rect x="95" y="186" width="170" height="16" rx="4" fill="#2F3545"/>
+  ${[115,145,175,205,235].map(x=>`<circle cx="${x}" cy="176" r="9" fill="none" stroke="${A}" stroke-width="4"/>`).join('')}</g>
+ <!-- right vitrine -->
+ <rect x="330" y="270" width="240" height="70" fill="${P}" stroke="${K}" stroke-width="3"/>
+ <rect x="330" y="202" width="240" height="68" fill="${SKY}" fill-opacity=".7" stroke="${K}" stroke-width="3"/>
+ <g class="hs" data-v="open"><rect x="336" y="276" width="112" height="58" fill="#2F3545"/>
+  <circle cx="360" cy="300" r="7" fill="none" stroke="${AL}" stroke-width="3"/><circle cx="390" cy="310" r="7" fill="none" stroke="${AL}" stroke-width="3"/><circle cx="420" cy="298" r="7" fill="none" stroke="${AL}" stroke-width="3"/>
+  <rect x="452" y="278" width="128" height="56" fill="${IV}" stroke="${K}" stroke-width="3"/></g>
+ <g class="hs" data-v="dome"><rect x="470" y="160" width="56" height="44" fill="transparent"/><circle cx="498" cy="190" r="10" fill="none" stroke="${A}" stroke-width="5"/><path d="M498 170 l6 6 -6 6 -6 -6z" fill="${B}"/></g>
+ <!-- cash desk -->
+ <rect x="610" y="240" width="150" height="100" fill="${P}" stroke="${K}" stroke-width="3"/>
+ <g class="dec" data-d="Касса — здесь нарушений нет"><rect x="636" y="194" width="80" height="46" rx="6" fill="#2F3545"/><rect x="646" y="202" width="40" height="16" rx="2" fill="#8FB3E0"/></g>
+ <g class="hs" data-v="kts"><rect x="718" y="212" width="42" height="30" fill="transparent"/><rect x="726" y="222" width="26" height="16" rx="5" fill="${K}"/><circle cx="739" cy="230" r="4.5" fill="#E5483A"/></g>
+</svg>`;
+const SPOTS = {
+  key:{x:180,y:318,t:'Ключ оставлен в замке витрины'},
+  tray:{x:180,y:180,t:'На планшете 5 изделий — можно не больше трёх'},
+  open:{x:392,y:305,t:'Витрина открыта, хотя изделия уже достали'},
+  dome:{x:498,y:184,t:'Кольцо лежит прямо на стеклянном куполе'},
+  kts:{x:739,y:228,t:'КТС лежит у кассы, а не на сотруднике'}
+};
+
+/* ======================= CONTENT ======================= */
+const MODULES = [
+{ id:'intro', title:'Зачем нужны правила', kicker:'Модуль 1',
+  lead:'Безопасность — часть сервиса, а не недоверие. Правила защищают прежде всего самого сотрудника.',
+  blocks:[
+    {t:'cards', items:[
+      ['Клиенту','Спокойно выбирает и примеряет, потому что сотрудник держит ситуацию под контролем.'],
+      ['Сотруднику','Он несёт полную материальную ответственность за ценности. Правила — его защита.'],
+      ['Салону','Охрана, камеры, сейфы, витрины на замке и КТС работают, только когда соблюдаются правила.']]},
+    {t:'h', text:'Пять средств защиты в каждом салоне'},
+    {t:'flips', items:[
+      ['📹','Видеонаблюдение','Фиксирует показ, оплату и упаковку. Видео — главный аргумент сотрудника, если что-то случилось.'],
+      ['🔐','Сейф','Для дорогого товара из группы риска. Хранить в нём личные вещи нельзя.'],
+      ['🗝️','Витрины на замке','Открыли — достали — закрыли. Ключ в замке не оставляем.'],
+      ['🔴','КТС','Кнопка тревожной сигнализации вызывает группу быстрого реагирования.'],
+      ['🛡️','Охрана','Договор с ЧОП на каждый салон, включая островные.']]},
+    {t:'callout', label:'Правило:', text:'если одно из средств не работает (например, камера), это не отменяет остальных правил. О неисправности сразу сообщаем руководителю.'},
+    {t:'sort', id:'tf1', labels:['Правда','Миф'], q:'Правда или миф?',
+      items:[
+        ['Если камера сломалась, можно показывать украшения без планшета', 1, 'Миф. Отсутствие одного средства защиты не отменяет остальные правила.'],
+        ['Правила безопасности защищают и самого сотрудника', 0, 'Правда. Если видео показывает, что всё сделано по правилам, ответственность может быть снята.'],
+        ['Правила касаются только продавцов, а директора и администраторы работают по своим', 1, 'Миф. Регламент обязателен для менеджеров, стилистов, администраторов, директоров и временно замещающих сотрудников.']]}
+  ]},
+{ id:'opening', title:'Открытие салона', kicker:'Модуль 2',
+  lead:'Первые минуты смены задают безопасность на весь день.',
+  blocks:[
+    {t:'steps', items:[
+      'Первым входит ответственный сотрудник с паролем снятия с охраны',
+      'До подъёма рольставен осмотрите вход: пломбы, двери, следы взлома и обуви',
+      'Снимите салон с охраны личным кодом, убедитесь, что внутри нет посторонних',
+      'Осмотрите витрины, сейф, кассовую зону, подсобку: следы проникновения, воды, огня',
+      'Проверьте работу КТС — каждый день до начала смены',
+      'Наденьте КТС: на шею, запястье или в карман — в быстром доступе',
+      'Выкладывайте товар при закрытых дверях или рольставнях']},
+    {t:'callout', label:'Важно:', text:'любая неисправность или подозрение на взлом — ничего не трогаем и сразу сообщаем руководителю.'},
+    {t:'order', id:'o1', q:'Расставьте действия при открытии салона в правильном порядке',
+      items:['Осмотреть вход: пломбы, двери, рольставни','Снять салон с охраны личным кодом','Осмотреть витрины, сейф и подсобку','Проверить работу КТС и надеть её','Выложить товар при закрытых рольставнях'],
+      explain:'Сначала внешний осмотр — только потом снятие с охраны. Товар выкладываем последним и при закрытом входе.'},
+    {t:'scenario', id:'sc1', q:'Утро понедельника', steps:[
+      {text:'Вы подходите к салону за 15 минут до открытия ТЦ и видите, что пломба на рольставнях сорвана.',
+       opts:[['Поднимаю рольставни и проверяю, всё ли на месте',0,'Нельзя: если был взлом, вы можете уничтожить следы. Сначала — сообщить.'],
+             ['Ничего не трогаю и сразу звоню руководителю',1,'Верно. Ничего не трогаем, сообщаем руководителю и действуем по его указанию.'],
+             ['Жду коллегу, вдвоём будет безопаснее заходить',0,'Ожидание не решает проблему: о признаках взлома нужно сообщить сразу.']]},
+      {text:'Руководитель приехал, следов проникновения внутри нет. Вы сняли салон с охраны. Что дальше?',
+       opts:[['Сразу выкладываю товар, чтобы успеть к открытию',0,'Сначала осмотр витрин, сейфа и подсобки и проверка КТС.'],
+             ['Осматриваю витрины, сейф, подсобку и проверяю КТС',1,'Верно. Осмотр и проверка КТС — до выкладки товара.']]},
+      {text:'КТС не срабатывает при проверке. Ваши действия?',
+       opts:[['Работаю без КТС — вторая кнопка же есть',0,'О неисправной КТС нужно сообщить руководителю: в салоне должно быть минимум две рабочие кнопки.'],
+             ['Сообщаю руководителю о неисправности',1,'Верно. Неисправность КТС — сразу руководителю.']]}]}
+  ]},
+{ id:'kts', title:'Тревожная кнопка (КТС)', kicker:'Модуль 3',
+  lead:'Группа быстрого реагирования приезжает не мгновенно. Поэтому КТС нажимаем заранее, а не в последний момент.',
+  blocks:[
+    {t:'kts'},
+    {t:'cols', items:[
+      ['Когда нажимать',['нападение на сотрудников или ущерб салону','попытка или факт открытого хищения','подозрительное, агрессивное поведение','забытые или подозрительные сумки, пакеты','посетитель в состоянии опьянения','пожар и подобные ситуации','любая угроза жизни, здоровью, имуществу']],
+      ['Как пользоваться',['носить при себе весь рабочий день','уходите из салона — передайте КТС коллеге','в салоне минимум две рабочие КТС','нажимать с усилием или короткими нажатиями','после сигнала — сообщить руководителю','в нерабочее время КТС хранятся в сейфе']]]},
+    {t:'sort', id:'s1', labels:['Нажать КТС','Не нужно'], q:'Нажимать или нет?', hint:'Распределите ситуации',
+      items:[
+        ['В салоне оставили пакет, хозяин не возвращается', 0, 'Забытые и подозрительные предметы — повод для КТС.'],
+        ['Клиент долго выбирает и не может определиться', 1, 'Это обычная работа с клиентом.'],
+        ['Посетитель в состоянии опьянения ведёт себя агрессивно', 0, 'Опьянение и агрессия — повод для КТС.'],
+        ['Клиент попросил скидку', 1, 'Обычная ситуация — работаем по правилам акций.'],
+        ['Посетитель дёргает накопители и не реагирует на просьбу перестать', 0, 'Попытка вскрыть оборудование после предупреждения — КТС.']]},
+    {t:'quiz', id:'q3', q:'Вам нужно срочно выйти из салона на 5 минут. Что делаете с КТС?',
+      opts:['Оставляю у кассы','Беру с собой','Передаю коллеге, который остаётся в салоне'],
+      ok:2, explain:'КТС должна оставаться в салоне у работающего сотрудника.'}
+  ]},
+{ id:'showing', title:'Показ украшений', kicker:'Модуль 4',
+  lead:'Большинство краж происходит во время показа. Восемь правил закрывают почти все риски.',
+  blocks:[
+    {t:'steps', items:[
+      'Стойте между клиентом и витриной, видя витрину, зал и руки клиента',
+      'Достали изделие — закрыли витрину. Ключ в замке не оставляем',
+      'Клиент не берёт украшения сам — только с демонстрационного планшета',
+      'Не более 3 изделий одновременно, в шахматном порядке или по диагонали',
+      'Ведите счёт: показано, убрано, лежит на планшете',
+      'Планшет — на куполе витрины, в зоне камеры. По салону его не носим',
+      'Нужно отойти — попросите коллегу присмотреть за изделиями',
+      'Никогда не выходите из салона с украшением, даже по просьбе клиента']},
+    {t:'spot', id:'sp1'},
+    {t:'scenario', id:'sc2', q:'Клиентка выбирает кольцо', steps:[
+      {text:'Клиентка просит показать сразу пять колец, «чтобы сравнить».',
+       opts:[['Выкладываю все пять — так ей удобнее',0,'На планшете не больше трёх изделий одновременно.'],
+             ['Предлагаю начать с трёх, остальные покажу, когда уберу лишние',1,'Верно: не больше трёх, ведём счёт показанных и убранных.']]},
+      {text:'Она хочет выйти с кольцом к зеркалу в коридоре ТЦ: «там свет лучше».',
+       opts:[['Выхожу вместе с ней и не свожу глаз с кольца',0,'Выходить из салона с украшением нельзя даже вместе с клиентом.'],
+             ['Объясняю, что украшения не покидают салон, и предлагаю зеркало и свет в салоне',1,'Верно. Предлагаем альтернативу внутри салона.']]},
+      {text:'Клиентке «звонят», и она быстро идёт к выходу.',
+       opts:[['Сразу пересчитываю изделия на планшете',1,'Верно. Так часто уходят с места кражи. Если чего-то не хватает — КТС и остановить голосом.'],
+             ['Бегу за ней, чтобы вернуть',0,'Не преследуем. Сначала пересчёт; при пропаже — КТС и остановить голосом.'],
+             ['Прощаюсь и спокойно убираю изделия',0,'Сначала пересчитайте изделия — внезапный уход может быть уловкой.']]}]}
+  ]},
+{ id:'cash', title:'Продажа и касса', kicker:'Модуль 5',
+  lead:'Упаковка при клиенте и честная работа с деньгами защищают и клиента, и сотрудника.',
+  blocks:[
+    {t:'cards', items:[
+      ['При клиенте','Покажите, что упаковываете именно выбранное украшение, и упакуйте его у клиента на глазах.'],
+      ['По документам','Сверьте все позиции до закрытия чека. Выдайте чек, гарантийный талон и всё, что в чеке.'],
+      ['До прощания','Проследите, чтобы клиент забрал покупку и свои личные вещи.']]},
+    {t:'sort', id:'s2', labels:['Можно','Нельзя'], q:'Можно или нельзя?',
+      items:[
+        ['Пропустить купюру через детектор и пересчитать сдачу под камерой', 0, 'Обязательно для каждой оплаты наличными.'],
+        ['Разменять посетителю пятитысячную купюру', 1, 'Размен посетителям запрещён.'],
+        ['Принять оплату переводом на карту сотрудника, пока завис терминал', 1, 'Оплата — только через кассу или терминал картой клиента.'],
+        ['Зарегистрировать вчерашнюю продажу сегодня', 1, 'Продажа регистрируется в 1С в момент оплаты. Задним числом — нельзя.'],
+        ['Убрать из чека позицию, от которой клиент отказался, до закрытия чека', 0, 'Верно: сверяем все позиции с клиентом до закрытия чека.']]},
+    {t:'h', text:'Признаки подлинности купюры — нажмите на карточку'},
+    {t:'flips', items:[
+      ['💡','На просвет','Видны водяные знаки и защитная нить.'],
+      ['↗️','При наклоне','Меняются цвет и изображения отдельных элементов.'],
+      ['✋','На ощупь','Чувствуется рельеф отдельных надписей и элементов.'],
+      ['🔍','При увеличении','Виден микротекст. Проверяйте не менее трёх признаков.']]},
+    {t:'callout', label:'Если детектор не принял купюру:', cls:'script', text:'«К сожалению, эта купюра не проходит через наш детектор — возможно, она повреждена. Её можно обменять в любом банке, а сейчас вы можете оплатить другой купюрой или картой».'},
+    {t:'quiz', id:'q6', q:'Детектор не принял купюру, клиент отказывается платить иначе. Ваши действия?',
+      opts:['Провожу продажу — клиент уверен, что купюра настоящая','Вежливо отказываю в продаже','Меняю купюру на свою и провожу продажу'],
+      ok:1, explain:'Сомнительную купюру не принимаем. Если клиент не готов заменить её или оплатить картой — вежливо отказываем в продаже.'}
+  ]},
+{ id:'hall', title:'Внимание в зале и посторонние', kicker:'Модуль 6',
+  lead:'Зал никогда не остаётся без внимания, а кассовая зона и подсобка — только для своих.',
+  blocks:[
+    {t:'cols', items:[
+      ['Что настораживает',['много вопросов, но нет интереса к украшениям','дёргают накопители, изучают замки','очки или головной убор в помещении','крупные сумки и пакеты, большие группы','признаки опьянения, сильная нервозность']],
+      ['Что делать',['держите в поле зрения кассу и ценности','предупредите коллег, усильте контроль','проверьте, что витрины и сейф закрыты','запомните приметы и время, сообщите руководителю','угроза не прекращается — КТС и охрана ТЦ']]]},
+    {t:'callout', label:'Тон:', text:'внимательность не должна превращаться в подозрительность. Большинство гостей приходят за покупкой — общаемся доброжелательно.'},
+    {t:'sort', id:'s3', labels:['Насторожиться','Обычный гость'], q:'Кто требует повышенного внимания?',
+      items:[
+        ['Мужчина задаёт много вопросов о сигнализации и графике работы, украшения не смотрит', 0, 'Интерес к оборудованию вместо украшений — тревожный признак.'],
+        ['Пара долго выбирает обручальные кольца и просит примерить разные размеры', 1, 'Обычная покупка.'],
+        ['Посетитель в тёмных очках и капюшоне в помещении, с большой пустой сумкой', 0, 'Скрытое лицо и крупная сумка — повод усилить контроль.'],
+        ['Клиентка возвращается за серьгами, которые отложила вчера', 1, 'Обычный клиент.']]},
+    {t:'h', text:'Посторонние в служебных зонах'},
+    {t:'steps', items:[
+      'Выясните цель визита и сообщите руководителю: ТЦ, салон, время, ФИО, цель',
+      'До согласования в кассовую зону и подсобку не пускаем',
+      'Визит согласован — уберите ценности, закройте сейф и ящики, ключи держите при себе',
+      'Один сотрудник всё время сопровождает гостя',
+      'Не уходит — вежливо попросите выйти; отказывается — КТС, охрана ТЦ, руководитель']},
+    {t:'quiz', id:'q8', q:'Мастер по оборудованию пришёл без предупреждения и сразу идёт в подсобку. Что делаете?',
+      opts:['Пускаю — это же мастер','Останавливаю, выясняю цель и ФИО, сообщаю руководителю; пускаю только после согласования','Пускаю, но прошу побыстрее'],
+      ok:1, explain:'До согласования с руководителем посторонние, включая сотрудников других салонов, в подсобку и кассовую зону не допускаются.'}
+  ]},
+{ id:'incidents', title:'Кража и ограбление', kicker:'Модуль 7',
+  lead:'Жизнь и здоровье дороже любого украшения.',
+  blocks:[
+    {t:'statement', title:'Никаких героических поступков', text:'Не вступаем в конфликт, не применяем силу, не преследуем. Наша задача — подать сигнал, запомнить детали и сохранить следы.'},
+    {t:'h', text:'Кража изделия во время смены'},
+    {t:'steps', items:[
+      'Сразу нажмите КТС — так, чтобы это было видно на камере',
+      'Позвоните оператору охраны: что случилось, приметы, куда ушёл человек. Запишите ФИО принявшего вызов',
+      'Зафиксируйте время нажатия КТС и прибытия охраны',
+      'Вызовите полицию: 102 или 112',
+      'Сообщите директору магазина — он решает, закрывать ли салон',
+      'Ничего не трогайте на месте: там могут остаться отпечатки',
+      'Напишите объяснительную: время, ситуация, время КТС и охраны, изделия (артикул, наименование, цена)']},
+    {t:'order', id:'o2', q:'Расставьте первые действия при краже в правильном порядке',
+      items:['Нажать КТС на камеру','Позвонить оператору охраны и описать приметы','Вызвать полицию','Сообщить директору магазина','Написать объяснительную'],
+      explain:'Сначала сигнал — КТС, затем охрана с приметами, полиция, руководитель. Объяснительная — когда ситуация под контролем.'},
+    {t:'h', text:'Ограбление: нападение или угрозы'},
+    {t:'cols', items:[
+      ['Во время',['по возможности нажмите КТС','сохраняйте спокойствие, не спорьте','отдавайте только то, что требуют','заранее говорите, что собираетесь сделать: «Сейчас я открою витрину»','запоминайте внешность, одежду, речь, к чему прикасается']],
+      ['После',['не преследуйте, но запомните, куда ушёл','закройте салон, ничего не трогайте','полиция 102 или 112: место, время, приметы, было ли оружие','сообщите руководителю и охране ТЦ','напишите объяснительную']]]},
+    {t:'scenario', id:'sc3', q:'Нападение в салоне', steps:[
+      {text:'Посетитель угрожает и требует открыть витрину с золотом.',
+       opts:[['Спорю и тяну время до приезда охраны',0,'Не спорим: это может спровоцировать агрессию. Жизнь дороже украшений.'],
+             ['По возможности незаметно нажимаю КТС и сохраняю спокойствие',1,'Верно. Сигнал — и спокойствие.']]},
+      {text:'Вам нужно достать ключ из кармана, чтобы открыть витрину.',
+       opts:[['Молча и быстро достаю ключ',0,'Резкое движение без предупреждения может быть принято за сопротивление.'],
+             ['Заранее говорю: «Сейчас я достану ключ и открою витрину»',1,'Верно. Проговариваем свои действия.']]},
+      {text:'Грабитель ушёл. Что делаете?',
+       opts:[['Выбегаю следом, чтобы увидеть машину',0,'Не преследуем. Запоминаем направление, не выходя из салона.'],
+             ['Закрываю салон, ничего не трогаю, звоню 102 или 112 и руководителю',1,'Верно. Сохраняем следы и вызываем полицию.'],
+             ['Навожу порядок на витрине до приезда полиции',0,'На месте происшествия ничего не трогаем — там отпечатки и следы.']]}]}
+  ]},
+{ id:'emergency', title:'Порча изделия и ЧС', kicker:'Модуль 8',
+  lead:'Спокойные и заботливые действия сохраняют и изделие, и отношения с клиентом.',
+  blocks:[
+    {t:'h', text:'Клиент повредил изделие'},
+    {t:'steps', items:[
+      'Нажмите КТС: для акта нужен сотрудник охранной компании',
+      'Успокойте клиента без упрёков: «Такое бывает, ничего страшного, сейчас всё оформим»',
+      'Попросите клиента написать заявление по форме',
+      'Пока клиент пишет — оформите акт о порче изделия',
+      'Акт подписывают клиент, два сотрудника салона, сотрудник охраны и директор',
+      'Поблагодарите клиента и вернитесь к выбору украшения']},
+    {t:'callout', label:'Как предотвратить:', text:'помогайте клиенту при примерке — особенно с замками, браслетами и цепями.'},
+    {t:'h', text:'Чрезвычайные ситуации — нажмите на карточку'},
+    {t:'flips', items:[
+      ['💡','Отключили свет','Товар — в сейф или накопители, приборы выключить, опустить рольставни, поставить на охрану и ждать.'],
+      ['🔥','Пожарная тревога','Вывести клиентов, обесточить приборы, запереть витрины, сейф и кассу, выйти по плану эвакуации ТЦ.'],
+      ['🪟','Разбита витрина','Оградить место, аккуратно убрать осколки, изделия — в сейф, заявка в технический отдел.']]},
+    {t:'callout', label:'Любая ЧС:', text:'сразу сообщите директору магазина.'},
+    {t:'quiz', id:'q10', q:'Клиентка порвала цепочку при примерке. Что делаете первым?',
+      opts:['Нажимаю КТС, чтобы приехал сотрудник охраны для подписания акта','Прошу клиентку оплатить цепочку','Убираю цепочку и делаю вид, что ничего не случилось'],
+      ok:0, explain:'Акт о порче подписывает в том числе сотрудник охранной компании — поэтому первым делом КТС, а с клиенткой — спокойно и без упрёков.'},
+    {t:'order', id:'o4', q:'Пожарная тревога: расставьте действия по порядку',
+      items:['Вывести всех клиентов','Обесточить приборы','Запереть витрины, сейф и кассу','Выйти по плану эвакуации ТЦ','Сообщить директору магазина'],
+      explain:'Люди — в первую очередь. Затем приборы и ценности, эвакуация, и после выхода — сообщить руководителю.'}
+  ]},
+{ id:'goods', title:'Товар: приёмка и пересчёт', kicker:'Модуль 9',
+  lead:'Потери часто случаются не в зале, а при приёмке и перемещении товара.',
+  blocks:[
+    {t:'cards', items:[
+      ['Приёмка','Только в зоне камер. Проверяем упаковку и пломбу, соответствие накладной, бирки, отсутствие брака. Расхождения — в GLPI.'],
+      ['Хранение','Золото, бриллианты и товар группы риска — в сейфе. Сейф — только для товара компании.'],
+      ['Перемещение','Между салонами — только по подписанному документу и с согласования ревизии. Вынос в личных целях запрещён.']]},
+    {t:'h', text:'При пересчёте не хватает изделия'},
+    {t:'steps', items:[
+      'Досчитайте все группы той же пробы: возможно, это пересорт, а не недостача',
+      'Недостача подтвердилась — сразу сообщите директору магазина и ревизору',
+      'Вместе с ревизором ищите изделие в салоне и на складе',
+      'Зафиксируйте недостачу в остатках записью с подписью',
+      'Все сотрудники смены пишут объяснительные',
+      'При подозрении на кражу запрашивается видео, дальше работает офис']},
+    {t:'sort', id:'tf2', labels:['Правда','Миф'], q:'Правда или миф?',
+      items:[
+        ['Товар можно принимать в подсобке, вне зоны камер, если там удобнее', 1, 'Миф. Приёмка проводится только в зоне видимости камер.'],
+        ['Перенести изделие в соседний салон можно только по подписанному документу', 0, 'Правда. Без документа и согласования ревизии — нельзя.'],
+        ['Если в группе не хватает двух изделий, это сразу недостача', 1, 'Миф. Сначала досчитайте все группы той же пробы — это может быть пересорт.']]},
+    {t:'quiz', id:'q11', q:'При пересчёте серёг из золота 585 не хватает двух пар с фианитами. Что делаете сначала?',
+      opts:['Сразу сообщаю о недостаче','Досчитываю все группы серёг 585 пробы — возможно, это пересорт','Ищу серьги в подсобке и никому не говорю'],
+      ok:1, explain:'Сначала исключаем пересорт по всем группам той же пробы, и только потом сигнализируем о недостаче.'}
+  ]},
+{ id:'closing', title:'Закрытие салона', kicker:'Модуль 10',
+  lead:'Салон должен остаться таким, чтобы утром не было вопросов.',
+  blocks:[
+    {t:'checklist', items:[
+      'В салоне не осталось клиентов',
+      'Не менее 80% золота и весь товар группы риска — в сейфе (остров — в ящиках прилавка с замком)',
+      'Купола, пол и полки проверены — украшений нигде нет',
+      'Смена закрыта в 1С: Z-отчёт и сверка итогов терминала',
+      'Витрины и сейф закрыты, ключ — у ответственного сотрудника',
+      'Приборы выключены, рольставни опущены (остров — витрины под чехлом)',
+      'Салон поставлен на охрану личным кодом']},
+    {t:'callout', label:'Салон не ставится на охрану:', text:'всё ценное в сейф, ключ при себе, сфотографируйте салон, сообщите руководителю и охране ТЦ. Уходите только после согласования.'},
+    {t:'more', title:'Кто остаётся на связи', text:'Сотрудник, у которого ключи от салона, должен быть на связи до начала следующей смены. Если охрана сообщит о вскрытии — он сразу сообщает директору магазина и выезжает в салон.'},
+    {t:'order', id:'o3', q:'Расставьте действия при закрытии салона в правильном порядке',
+      items:['Убедиться, что в салоне нет клиентов','Убрать золото и товар группы риска в сейф','Проверить купола, пол и полки','Снять Z-отчёт и сверку итогов терминала','Опустить рольставни и поставить салон на охрану'],
+      explain:'Сначала клиенты и товар, затем проверка и касса, и только в самом конце — постановка на охрану.'},
+    {t:'quiz', id:'q12', q:'Какую долю золота нужно убрать в сейф на ночь?',
+      opts:['Не менее 50%','Не менее 80%','Сколько поместится'],
+      ok:1, explain:'Не менее 80% золота от общего объёма и весь товар группы риска хранятся ночью в сейфе.'}
+  ]},
+{ id:'fraud', title:'Телефонное мошенничество', kicker:'Модуль 11',
+  lead:'Голос можно подделать с помощью ИИ. Любую просьбу передать деньги или товар проверяем.',
+  blocks:[
+    {t:'steps', items:[
+      'Любую просьбу передать деньги, товар или сделать перевод проверяйте у прямого руководителя по известному номеру',
+      'Не отвечайте на незнакомые номера и звонки в мессенджерах, если не ждёте звонка',
+      '«Банк», «полиция», «ФСБ», «управляющая компания» по телефону — повод положить трубку',
+      'Никому не называйте коды из СМС, паспортные данные и данные карт, не включайте демонстрацию экрана']},
+    {t:'scenario', id:'sc4', q:'Звонок в салон', steps:[
+      {text:'Звонок в мессенджере с незнакомого номера. Голос очень похож на голос директора магазина: «Срочно нужно перевести 50 000 из кассы поставщику, я потом всё оформлю».',
+       opts:[['Перевожу — голос точно её',0,'Голос можно подделать с помощью ИИ. Никаких переводов по звонку.'],
+             ['Говорю, что перезвоню, кладу трубку и звоню руководителю по известному номеру',1,'Верно. Проверяем только по номеру, который знаем сами.']]},
+      {text:'Через минуту «сотрудник банка» сообщает, что карта салона заблокирована, и просит назвать код из СМС.',
+       opts:[['Называю код, чтобы разблокировать карту',0,'Коды из СМС никому не сообщаем. Банк их не спрашивает.'],
+             ['Кладу трубку, код не называю',1,'Верно. «Банк» по телефону — повод положить трубку.']]},
+      {text:'Что делаете после этих звонков?',
+       opts:[['Ничего — главное, что не перевёл',0,'О попытке мошенничества стоит сообщить руководителю, чтобы предупредить другие салоны.'],
+             ['Сообщаю руководителю о попытке мошенничества',1,'Верно. Так руководитель предупредит другие салоны.']]}]}
+  ]},
+{ id:'responsibility', title:'Ответственность и памятка', kicker:'Модуль 12',
+  lead:'Правила защищают того, кто их соблюдает.',
+  blocks:[
+    {t:'cards', items:[
+      ['Материальная','Утрата товара или денег по вине сотрудников возмещается в размере, подтверждённом инвентаризацией.'],
+      ['Дисциплинарная','Умышленное или неоднократное нарушение — взыскания, вплоть до увольнения.'],
+      ['Если всё сделано верно','Видео показывает, что правила соблюдены, — вопрос решается индивидуально, вплоть до полного снятия ответственности.']]},
+    {t:'callout', label:'Закон:', text:'за умышленные противоправные действия — ответственность по законодательству РФ, включая уголовную.'},
+    {t:'h', text:'Памятка: пять правил, которые нельзя забыть'},
+    {t:'flips', items:[
+      ['1','КТС всегда на мне','…и я нажимаю её заранее, а не в последний момент.'],
+      ['2','Витрина закрыта','На планшете не больше трёх изделий, я веду счёт.'],
+      ['3','Каждая купюра — через детектор','Без размена и без спешки, под камерой.'],
+      ['4','Посторонних — никуда','Ни в кассовую зону, ни в подсобку без согласования.'],
+      ['5','Не геройствую','Сигнал, приметы, ничего не трогаю.']]},
+    {t:'quiz', id:'q14', q:'Сотрудник выполнил все правила, но хищение всё равно произошло. Что с ответственностью?',
+      opts:['Ответственность всегда полная','Вопрос решается индивидуально, вплоть до полного снятия','Ответственность несёт только директор'],
+      ok:1, explain:'Именно поэтому важно работать в зоне камер и по стандарту: видео — главный аргумент сотрудника.'}
+  ]}
+];
+
+const FINAL = [
+ {q:'Сколько изделий можно одновременно держать на демонстрационном планшете?', opts:['2','3','5'], ok:1},
+ {q:'Когда нужно проверять работу КТС?', opts:['Раз в неделю','Каждый день до начала смены','Только после нештатной ситуации'], ok:1},
+ {q:'Что сделать до подъёма рольставен при открытии?', opts:['Выложить товар','Осмотреть вход: пломбы, двери, следы взлома','Включить компьютер'], ok:1},
+ {q:'Клиент повредил изделие. Первое действие?', opts:['Нажать КТС','Позвонить в офис','Потребовать оплату'], ok:0},
+ {q:'Детектор не принял купюру, клиент отказывается платить иначе:', opts:['Провести продажу','Вежливо отказать в продаже','Принять купюру под расписку'], ok:1},
+ {q:'Какую долю золота убирают в сейф на ночь?', opts:['Не менее 50%','Не менее 80%','По желанию сотрудника'], ok:1},
+ {q:'Можно ли принять оплату переводом на карту сотрудника?', opts:['Да, если касса не работает','Да, по согласованию с коллегой','Нет, никогда'], ok:2},
+ {q:'Что делать на месте происшествия после ограбления?', opts:['Навести порядок','Ничего не трогать до приезда полиции','Убрать оставшийся товар в сейф и протереть витрины'], ok:1},
+ {q:'Сотрудник другого салона компании хочет пройти в подсобку. Как поступить?', opts:['Пустить — он свой','Выяснить цель и согласовать визит с руководителем','Пустить, если он оставит телефон'], ok:1},
+ {q:'Клиент просит выйти с украшением к зеркалу в ТЦ:', opts:['Выйти вместе с ним','Отказать и предложить зеркало в салоне','Разрешить под залог'], ok:1},
+ {q:'Где во время показа должен лежать планшет с изделиями?', opts:['На куполе витрины, в зоне камеры','В руках у сотрудника, чтобы носить по салону','На кассе'], ok:0},
+ {q:'Салон не ставится на охрану при закрытии. Что делать?', opts:['Уйти и сообщить утром','Всё ценное в сейф, фото салона, сообщить руководителю и охране ТЦ, уйти после согласования','Остаться в салоне на ночь'], ok:1},
+ {q:'Звонит «руководитель» и просит срочно передать товар курьеру:', opts:['Передать — голос знакомый','Перезвонить руководителю по известному номеру и проверить','Передать половину'], ok:1},
+ {q:'При пересчёте не хватает изделия. Первый шаг?', opts:['Сообщить о недостаче','Досчитать все группы той же пробы — проверить пересорт','Написать объяснительную'], ok:1},
+ {q:'Если сотрудник выполнил все правила, но хищение произошло:', opts:['Ответственность всегда полная','Вопрос решается индивидуально','Отвечает охранная компания'], ok:1}
+];
+const PASS = 0.8;
+/* URL веб-приложения Apps Script (таблица «Безопасность салона — результаты обучения»). Пусто — результаты не отправляются. */
+const API_URL = 'https://script.google.com/macros/s/AKfycbwTgmSfajuCm9zm9yErkksEKuRt3vHr7_QRUlDyK4xoVyh1adD3t2Hatm_eaACHYU3z/exec';
+const DOCS_URL = 'https://drive.google.com/drive/folders/1nfZypwwYSjLdeCnpIy3WaoL2xjZGGOMg';
+const BRANDS = ['Соколов','МЮЗ','Сенат','Пламенея'];
+const TASK_TYPES = ['quiz','order','sort','spot','scenario'];
+
+/* ======================= STATE ======================= */
+const KEY = 'sec-course-v2';
+let S = {name:'', brand:'', salon:'', tasks:{}, final:null, view:'start', pts:0, queue:[], device:''};
+try { const raw = localStorage.getItem(KEY); if (raw) S = Object.assign(S, JSON.parse(raw)); } catch(e){}
+if (!S.device) S.device = 'D' + Math.random().toString(36).slice(2,8).toUpperCase();
+function save(){ try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){} }
+
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function shuffle(a){ a=a.slice(); for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; }
+function toast(t){ const el=$('#toast'); el.textContent=t; el.classList.add('on'); clearTimeout(toast._t); toast._t=setTimeout(()=>el.classList.remove('on'),2200); }
+
+function award(id, n, anchor){
+  if (S.tasks[id] && S.tasks[id].awarded) return;
+  S.tasks[id] = Object.assign(S.tasks[id]||{}, {awarded:true});
+  if (n<=0) return;
+  S.pts += n; save();
+  $('#ptsN').textContent = S.pts;
+  const p = $('#pts'); p.classList.remove('bump'); void p.offsetWidth; p.classList.add('bump');
+  if (anchor){ const r = anchor.getBoundingClientRect(); const s = document.createElement('div'); s.className='plus'; s.textContent='+'+n;
+    s.style.left = (r.left + r.width/2 - 20)+'px'; s.style.top = (r.top - 10)+'px'; document.body.appendChild(s); setTimeout(()=>s.remove(),1200); }
+}
+function complete(id, correct, extra, anchor, pts){
+  const first = !(S.tasks[id] && S.tasks[id].done);
+  S.tasks[id] = Object.assign(S.tasks[id]||{}, {done:true, correct}, extra||{});
+  save();
+  if (first) award(id, pts!=null?pts:(correct?10:3), anchor);
+}
+
+function tasksOf(m){ return m.blocks.filter(b=>TASK_TYPES.includes(b.t)).map(b=>b.id); }
+function modDone(m){ return tasksOf(m).every(id => S.tasks[id] && S.tasks[id].done); }
+function progress(){
+  const total = MODULES.length + 1;
+  const d = MODULES.filter(modDone).length + (S.final && S.final.passed ? 1 : 0);
+  return Math.round(d/total*100);
+}
+
+/* ======================= NAV ======================= */
+const VIEWS = ['start', ...MODULES.map(m=>m.id), 'final'];
+function renderNav(){
+  let h = `<button data-v="start" class="${S.view==='start'?'cur':''}"><span class="n">i</span><span>Начало</span></button>`;
+  MODULES.forEach((m,i)=>{
+    const cls = [S.view===m.id?'cur':'', modDone(m)?'done':''].join(' ');
+    h += `<button data-v="${m.id}" class="${cls}"><span class="n">${modDone(m)?'✓':i+1}</span><span>${esc(m.title)}</span></button>`;
+  });
+  const fd = S.final && S.final.passed;
+  h += `<button data-v="final" class="${S.view==='final'?'cur':''} ${fd?'done':''}"><span class="n">${fd?'✓':'★'}</span><span>Итоговый тест</span></button>`;
+  $('#nav').innerHTML = h;
+  $('#nav').querySelectorAll('button').forEach(b => b.onclick = () => go(b.dataset.v));
+  const p = progress();
+  $('#barFill').style.width = p+'%'; $('#progTxt').textContent = p+'% пройдено';
+  $('#ptsN').textContent = S.pts;
+}
+function go(v){
+  S.view = v; save();
+  if (location.hash.slice(1) !== v) { try{ history.replaceState(null,'','#'+v); }catch(e){ try{location.hash = v;}catch(_){} } }
+  render(); $('#nav').classList.remove('open'); window.scrollTo(0,0);
+}
+$('#menuBtn').onclick = () => $('#nav').classList.toggle('open');
+
+/* ======================= RENDER ======================= */
+function render(){
+  renderNav();
+  const v = S.view;
+  if (v==='start') return renderStart();
+  if (v==='final') return renderFinal();
+  const m = MODULES.find(x=>x.id===v); if (!m) return go('start');
+  renderModule(m);
+}
+
+function validName(s){
+  const parts = normName(s).split(' ').filter(Boolean);
+  return parts.length >= 2 && parts.length <= 3 && parts.every(p => /^[А-ЯЁA-Z][а-яёa-z]+(-[А-ЯЁA-Z][а-яёa-z]+)?$/.test(p));
+}
+function normName(s){
+  return String(s||'').replace(/\s+/g,' ').trim().split(' ').map(w => w.split('-').map(p => p ? p[0].toUpperCase()+p.slice(1).toLowerCase() : p).join('-')).join(' ');
+}
+function profileOk(){ return validName(S.name) && !!S.brand && !!(S.salon||'').trim(); }
+let SALONS = null; // [{brand,salon}] or null if not loaded
+function loadSalons(){
+  if (!API_URL) return;
+  fetch(API_URL + '?action=salons').then(r => r.json()).then(d => {
+    if (d && d.salons && d.salons.length){ SALONS = d.salons; if (S.view==='start') renderStart(); }
+  }).catch(()=>{});
+}
+function renderStart(){
+  const started = Object.keys(S.tasks).length>0;
+  const nTasks = MODULES.reduce((a,m)=>a+tasksOf(m).length,0);
+  const list = SALONS ? SALONS.filter(x => x.brand===S.brand).map(x=>x.salon) : null;
+  const salonField = (SALONS && S.brand)
+    ? (list.length
+        ? `<select id="sl"><option value="">— выберите салон —</option>${list.map(x=>`<option ${x===S.salon?'selected':''}>${esc(x)}</option>`).join('')}</select>`
+        : `<input id="sl" value="${esc(S.salon||'')}" placeholder="Торговый центр и город">`)
+    : `<input id="sl" value="${esc(S.salon||'')}" placeholder="${S.brand?'Торговый центр и город':'Сначала выберите сеть'}" ${S.brand?'':'disabled'}>`;
+  $('#main').innerHTML = `<div class="mod">
+   <div class="hero"><div>
+    <div class="kicker">Общий стандарт для всех сетей</div>
+    <h1>Безопасность ювелирного салона</h1>
+    <p>Интерактивное обучение для сотрудников салонов Соколов, МЮЗ, Сенат и Пламенея: менеджеров по продажам, продавцов-стилистов, администраторов и директоров магазинов.</p>
+    <div class="meta"><div><b>12</b>модулей</div><div><b>${nTasks}</b>заданий и ситуаций</div><div><b>${FINAL.length}</b>вопросов в итоговом тесте</div><div><b>★</b>баллы за верные ответы</div></div>
+   </div><div class="ill">${ILL.start}</div></div>
+   <div class="block" style="margin-top:28px">
+    <h3>Как проходить обучение</h3>
+    <p>Модули идут по порядку рабочего дня — от открытия салона до закрытия. Внутри — ситуации с выбором, задания «найди нарушения», «правда или миф», сортировки и тренажёры. Модуль засчитывается, когда выполнены все задания. За верный ответ с первой попытки — 10 баллов. В конце — итоговый тест.</p>
+   </div>
+   <div class="block">
+    <h3>Расскажите о себе</h3>
+    <div class="field"><label for="nm">Фамилия и имя</label><input id="nm" value="${esc(S.name)}" placeholder="Например, Иванова Анна" autocomplete="name">
+      <small class="ferr" id="nmErr">${S.name && !validName(S.name) ? 'Укажите фамилию и имя полностью, русскими или латинскими буквами' : ''}</small>
+      <small class="fhint">Пишите так же, как в документах: по фамилии и имени считаются ваши попытки и результат.</small></div>
+    <div class="field"><label>Ваша сеть</label><div class="brands">${BRANDS.map(b=>`<button data-b="${b}" class="${S.brand===b?'sel':''}">${b}</button>`).join('')}</div></div>
+    <div class="field"><label for="sl">Салон</label>${salonField}</div>
+    <div class="row"><button class="btn amber" id="startBtn" ${profileOk()?'':'disabled'}>${started?'Продолжить обучение':'Начать обучение'}</button>
+    ${started?'<button class="btn ghost" id="resetBtn">Начать заново</button>':''}</div>
+    <p class="status" id="pfHint" ${profileOk()?'style="display:none"':''}>Заполните фамилию и имя, сеть и салон, чтобы начать.</p>
+   </div>
+   <div class="block callout"><b>Документы курса.</b> Основа обучения — <a href="${DOCS_URL}" target="_blank" rel="noopener">Регламент №1.1 «Правила и требования для сотрудников в целях минимизации риска утраты и хищения материальных ценностей» и его краткая версия</a>.
+    <div class="row" style="margin-top:12px"><a class="btn ghost sm" href="${DOCS_URL}" target="_blank" rel="noopener" style="text-decoration:none">📄 Открыть регламент и инструкцию</a></div></div>
+   </div>`;
+  const upd = () => { const b = $('#startBtn'); if (b) b.disabled = !profileOk(); const h = $('#pfHint'); if (h) h.style.display = profileOk() ? 'none' : ''; };
+  $('#nm').oninput = e => { S.name = e.target.value; save(); $('#nmErr').textContent=''; upd(); };
+  $('#nm').onblur = e => { const v = normName(e.target.value); e.target.value = v; S.name = v; save();
+    $('#nmErr').textContent = v && !validName(v) ? 'Укажите фамилию и имя полностью, русскими или латинскими буквами' : ''; upd(); };
+  const sl = $('#sl'); if (sl){ const h = e => { S.salon = e.target.value.trim(); save(); upd(); }; sl.oninput = h; sl.onchange = h; }
+  document.querySelectorAll('.brands button').forEach(b => b.onclick = () => {
+    if (S.brand !== b.dataset.b){ S.brand = b.dataset.b; if (SALONS) S.salon = ''; save(); renderStart(); }
+  });
+  $('#startBtn').onclick = () => {
+    if (!profileOk()) return;
+    S.name = normName(S.name); save();
+    sendEvent('progress');
+    const next = MODULES.find(m=>!modDone(m)); go(next ? next.id : 'final');
+  };
+  const r = $('#resetBtn'); if (r) r.onclick = () => {
+    r.outerHTML = '<span class="status" style="margin:0">Сбросить прогресс и баллы на этом устройстве?</span><button class="btn" id="rsY">Да, сбросить</button><button class="btn ghost" id="rsN">Отмена</button>';
+    $('#rsY').onclick = () => { S.tasks={}; S.final=null; S.pts=0; save(); renderNav(); renderStart(); };
+    $('#rsN').onclick = renderStart;
+  };
+}
+
+/* ----- отправка результатов ----- */
+function sendEvent(type, extra){
+  if (!API_URL || !profileOk()) return;
+  const payload = Object.assign({
+    type, name: normName(S.name), brand: S.brand, salon: (S.salon||'').trim(), device: S.device,
+    pts: S.pts, modules: MODULES.filter(modDone).length,
+    tasks: Object.values(S.tasks).filter(t=>t.done).length, ts: Date.now()
+  }, extra||{});
+  S.queue = (S.queue||[]).concat([payload]); save();
+  flushQueue();
+}
+function flushQueue(){
+  if (!API_URL || !S.queue || !S.queue.length || flushQueue.busy) return;
+  flushQueue.busy = true;
+  const item = S.queue[0];
+  fetch(API_URL, {method:'POST', mode:'no-cors', headers:{'Content-Type':'text/plain;charset=utf-8'}, body: JSON.stringify(item)})
+    .then(() => { S.queue.shift(); save(); flushQueue.busy = false; flushQueue(); })
+    .catch(() => { flushQueue.busy = false; setTimeout(flushQueue, 30000); });
+}
+
+function blockHTML(b){
+  switch(b.t){
+    case 'h': return `<div class="block"><h3>${esc(b.text)}</h3></div>`;
+    case 'steps': return `<div class="block"><ol class="steps">${b.items.map((s,i)=>`<li style="animation-delay:${i*70}ms"><span class="num">${i+1}</span><span>${esc(s)}</span></li>`).join('')}</ol></div>`;
+    case 'cards': return `<div class="block cards">${b.items.map(([t,d])=>`<div class="card ${b.accent||''}"><h4>${esc(t)}</h4><p>${esc(d)}</p></div>`).join('')}</div>`;
+    case 'cols': return `<div class="block cols">${b.items.map(([t,list],i)=>`<div class="card ${i?'a':''}"><h4>${esc(t)}</h4><ul>${list.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div>`).join('')}</div>`;
+    case 'callout': return `<div class="block callout"><b>${esc(b.label||'')}</b> <span class="${b.cls||''}">${esc(b.text)}</span></div>`;
+    case 'statement': return `<div class="block statement"><div><h3>${esc(b.title)}</h3><p>${esc(b.text)}</p></div><div class="ill">${ILL.statement}</div></div>`;
+    case 'more': return `<div class="block"><details class="more"><summary>${esc(b.title)}</summary><div>${esc(b.text)}</div></details></div>`;
+    case 'flips': return `<div class="block flips">${b.items.map(([ic,t,d])=>`<button class="flip"><div class="in"><div class="f"><span class="ic">${esc(ic)}</span><div><h4>${esc(t)}</h4><small>Нажмите, чтобы перевернуть</small></div></div><div class="b">${esc(d)}</div></div></button>`).join('')}</div>`;
+    case 'kts': return `<div class="block task" id="kts"></div>`;
+    case 'checklist': return `<div class="block task" id="chk"></div>`;
+    default: return TASK_TYPES.includes(b.t) ? `<div class="task" id="t-${b.id}"></div>` : '';
+  }
+}
+
+function renderModule(m){
+  const prev = VIEWS[VIEWS.indexOf(m.id)-1], next = VIEWS[VIEWS.indexOf(m.id)+1];
+  $('#main').innerHTML = `<div class="mod">
+    <div class="mhead"><div><div class="kicker">${esc(m.kicker)} из ${MODULES.length}</div><h2>${esc(m.title)}</h2><p class="lead">${esc(m.lead)}</p></div><div class="ill">${ILL[m.id]||''}</div></div>
+    ${m.blocks.map(blockHTML).join('')}
+    <div class="navrow"><button class="btn ghost" id="prevBtn">← Назад</button><button class="btn" id="nextBtn">${next==='final'?'К итоговому тесту →':'Следующий модуль →'}</button></div>
+    <p class="status" id="modStatus"></p></div>`;
+  const mount = {quiz:mountQuiz, order:mountOrder, sort:mountSort, spot:mountSpot, scenario:mountScenario, kts:mountKts, checklist:mountChecklist};
+  m.blocks.forEach(b => { if (mount[b.t]) mount[b.t](b, m); });
+  document.querySelectorAll('.flip').forEach(f => f.onclick = () => f.classList.toggle('on'));
+  $('#prevBtn').onclick = () => go(prev);
+  $('#nextBtn').onclick = () => go(next);
+  updStatus(m);
+}
+function updStatus(m){
+  const ids = tasksOf(m), d = ids.filter(id=>S.tasks[id]&&S.tasks[id].done).length;
+  const el = $('#modStatus'); if (!el) return;
+  const was = el.dataset.done==='1';
+  el.textContent = d===ids.length ? '✓ Модуль пройден' : `Выполнено заданий: ${d} из ${ids.length}. Модуль засчитывается, когда выполнены все.`;
+  el.dataset.done = d===ids.length ? '1':'0';
+  if (d===ids.length && !was && el.dataset.init) toast('Модуль «'+m.title+'» пройден!');
+  if (d===ids.length && !was && el.dataset.init) sendEvent('progress');
+  el.dataset.init = '1';
+  renderNav();
+}
+const head = (label, id) => `<div class="tl"><span>${label}</span>${S.tasks[id]&&S.tasks[id].done?'<em>✓ выполнено</em>':'<em>+10 ★</em>'}</div>`;
+
+/* ----- quiz ----- */
+function mountQuiz(b, m){
+  const el = $('#t-'+b.id);
+  let sel = new Set();
+  const multi = !!b.multi, okSet = new Set(multi ? b.ok : [b.ok]);
+  function draw(answered, chosen){
+    el.classList.toggle('solved', !!(S.tasks[b.id]&&S.tasks[b.id].done));
+    el.innerHTML = `${head('Вопрос', b.id)}<div class="q">${esc(b.q)}</div>
+      <div class="hint">${esc(b.hint || (multi?'Выберите все подходящие варианты':'Выберите один вариант'))}</div>
+      <div class="opts">${b.opts.map((o,i)=>{
+        let c = 'opt' + (multi?'':' radio');
+        if (answered){ if (chosen.includes(i)) c += okSet.has(i)?' right':' wrong'; else if (okSet.has(i)) c += ' missed'; }
+        else if (sel.has(i)) c += ' sel';
+        return `<button class="${c}" data-i="${i}" ${answered?'disabled':''}><span class="box"></span><span>${esc(o)}</span></button>`;}).join('')}</div>
+      <div class="row">${answered?'<button class="btn ghost sm" data-act="retry">Ответить ещё раз</button>':'<button class="btn" data-act="check" disabled>Проверить</button>'}</div>
+      <div class="fb"></div>`;
+    if (!answered){
+      el.querySelectorAll('.opt').forEach(o => o.onclick = () => {
+        const i = +o.dataset.i;
+        if (multi){ sel.has(i)?sel.delete(i):sel.add(i); } else { sel = new Set([i]); }
+        draw(false);
+      });
+      const cb = el.querySelector('[data-act=check]'); cb.disabled = sel.size===0;
+      cb.onclick = () => {
+        const chosen = [...sel];
+        const correct = chosen.length===okSet.size && chosen.every(i=>okSet.has(i));
+        complete(b.id, correct, {chosen}, cb);
+        draw(true, chosen); fb(correct); updStatus(m);
+      };
+    } else el.querySelector('[data-act=retry]').onclick = () => { sel = new Set(); draw(false); };
+  }
+  function fb(correct){
+    const f = el.querySelector('.fb'); f.className = 'fb show ' + (correct?'ok':'no');
+    f.innerHTML = `<b>${correct?'Верно!':'Не совсем.'}</b>${esc(b.explain)}${correct?'':' Правильный вариант отмечен зелёной рамкой.'}`;
+  }
+  const st = S.tasks[b.id];
+  if (st && st.done){ draw(true, st.chosen||[]); fb(st.correct); } else draw(false);
+}
+
+/* ----- ordering ----- */
+function mountOrder(b, m){
+  const el = $('#t-'+b.id);
+  let placed = [], pool = shuffle(b.items.map((_,i)=>i));
+  function draw(checked){
+    el.classList.toggle('solved', !!(S.tasks[b.id]&&S.tasks[b.id].done));
+    el.innerHTML = `${head('Порядок действий', b.id)}<div class="q">${esc(b.q)}</div>
+      <div class="hint">Нажимайте на шаги по очереди — от первого к последнему. Нажмите на выбранный шаг, чтобы вернуть его.</div>
+      <div class="sub">Ваш порядок</div>
+      <div class="placed">${placed.length?placed.map((i,k)=>`<button class="it ${checked?(i===k?'right':'wrong'):''}" data-p="${k}" ${checked?'disabled':''}><span class="k">${k+1}</span><span>${esc(b.items[i])}</span></button>`).join(''):'<p class="hint" style="margin:0">Пока пусто</p>'}</div>
+      ${pool.length?`<div class="sub">Шаги</div><div class="pool">${pool.map(i=>`<button class="it" data-q="${i}"><span class="k">·</span><span>${esc(b.items[i])}</span></button>`).join('')}</div>`:''}
+      <div class="row">${checked?'<button class="btn ghost sm" data-act="retry">Попробовать ещё раз</button>':`<button class="btn" data-act="check" ${pool.length?'disabled':''}>Проверить</button>`}</div>
+      <div class="fb"></div>`;
+    if (!checked){
+      el.querySelectorAll('[data-q]').forEach(x => x.onclick = () => { const i=+x.dataset.q; pool=pool.filter(p=>p!==i); placed.push(i); draw(false); });
+      el.querySelectorAll('[data-p]').forEach(x => x.onclick = () => { const k=+x.dataset.p; const i=placed[k]; placed.splice(k,1); pool.push(i); draw(false); });
+      const cb = el.querySelector('[data-act=check]');
+      cb.onclick = () => { const correct = placed.every((i,k)=>i===k); complete(b.id, correct, {placed:placed.slice()}, cb); draw(true); fb(correct); updStatus(m); };
+    } else el.querySelector('[data-act=retry]').onclick = () => { placed=[]; pool=shuffle(b.items.map((_,i)=>i)); draw(false); };
+  }
+  function fb(correct){
+    const f = el.querySelector('.fb'); f.className = 'fb show '+(correct?'ok':'no');
+    f.innerHTML = `<b>${correct?'Верно!':'Порядок нарушен.'}</b>${correct?'':'Правильно: '+b.items.map((t,i)=>`${i+1}) ${esc(t)}`).join('; ')+'. '}${esc(b.explain)}`;
+  }
+  const st = S.tasks[b.id];
+  if (st && st.done){ placed = st.placed||[]; pool=[]; draw(true); fb(st.correct); } else draw(false);
+}
+
+/* ----- sort / true-false ----- */
+function mountSort(b, m){
+  const el = $('#t-'+b.id);
+  let ans = {};
+  const st = S.tasks[b.id];
+  if (st && st.done) ans = Object.assign({}, st.ans);
+  function draw(){
+    const all = Object.keys(ans).length === b.items.length;
+    el.classList.toggle('solved', !!(S.tasks[b.id]&&S.tasks[b.id].done));
+    el.innerHTML = `${head(b.labels.join(' / '), b.id)}<div class="q">${esc(b.q)}</div><div class="hint">${esc(b.hint||'Выберите ответ для каждого утверждения')}</div>
+      <div class="srt">${b.items.map(([t,c,ex],i)=>{ const a = ans[i]; const cls = a==null?'':(a===c?'r':'w');
+        return `<div class="itm ${cls}"><span>${esc(t)}</span><div class="ch">${b.labels.map((l,k)=>`<button data-i="${i}" data-k="${k}" class="${a===k?'pick':''}" ${a!=null?'disabled':''}>${esc(l)}</button>`).join('')}</div><div class="ex">${a===c?'✓ ':'✗ '}${esc(ex)}</div></div>`;}).join('')}</div>
+      ${all?`<div class="row"><button class="btn ghost sm" data-act="retry">Пройти ещё раз</button></div>`:''}`;
+    el.querySelectorAll('.ch button:not([disabled])').forEach(x => x.onclick = () => {
+      ans[+x.dataset.i] = +x.dataset.k; draw();
+      if (Object.keys(ans).length === b.items.length){
+        const n = b.items.filter(([t,c],i)=>ans[i]===c).length;
+        complete(b.id, n===b.items.length, {ans}, el.querySelector('.q'), Math.round(10*n/b.items.length));
+        toast(`Верно: ${n} из ${b.items.length}`); draw(); updStatus(m);
+      }
+    });
+    const r = el.querySelector('[data-act=retry]'); if (r) r.onclick = () => { ans = {}; draw(); };
+  }
+  draw();
+}
+
+/* ----- spot the violations ----- */
+function mountSpot(b, m){
+  const el = $('#t-'+b.id);
+  const st = S.tasks[b.id];
+  let found = st && st.done ? Object.keys(SPOTS) : [], misses = 0;
+  el.innerHTML = `${head('Найди нарушения', b.id)}<div class="q">Найдите 5 нарушений на картинке</div>
+    <div class="hint">Нажимайте на места, где сотрудник нарушил правила показа. Найдено: <b id="spN">${found.length}</b> из 5</div>
+    <div class="scene">${SCENE}</div><div class="spotlist" id="spL"></div>
+    <div class="row" id="spR"></div>`;
+  const sv = el.querySelector('svg');
+  function mark(v, i){
+    const s = SPOTS[v], ns = 'http://www.w3.org/2000/svg';
+    const g = document.createElementNS(ns,'g');
+    g.innerHTML = `<circle class="found-ring" cx="${s.x}" cy="${s.y}" r="34"/><circle class="found-b" cx="${s.x+30}" cy="${s.y-30}" r="15"/><text class="found-n" x="${s.x+30}" y="${s.y-23}" text-anchor="middle">${i}</text>`;
+    sv.appendChild(g);
+  }
+  function list(){
+    $('#spL').innerHTML = found.map((v,i)=>`<div>${i+1}. ${esc(SPOTS[v].t)}</div>`).join('');
+    $('#spN').textContent = found.length;
+    const done = found.length===5;
+    $('#spR').innerHTML = done ? '' : (misses>=2 ? '<button class="btn ghost sm" id="spGive">Показать оставшиеся</button>' : '');
+    const g = $('#spGive'); if (g) g.onclick = () => {
+      Object.keys(SPOTS).forEach(v => { if (!found.includes(v)){ found.push(v); mark(v, found.length); } });
+      list(); complete(b.id, false, {}, el.querySelector('.q'), 3); updStatus(m);
+    };
+  }
+  found.forEach((v,i)=>mark(v,i+1)); list();
+  sv.querySelectorAll('.hs').forEach(h => h.onclick = (e) => {
+    e.stopPropagation(); const v = h.dataset.v;
+    if (found.includes(v)) return;
+    found.push(v); mark(v, found.length); list(); toast('Нашли: ' + SPOTS[v].t);
+    if (found.length===5){ complete(b.id, misses<3, {}, el.querySelector('.q'), Math.max(4, 10-misses*2)); toast('Все 5 нарушений найдены!'); updStatus(m); }
+  });
+  sv.querySelectorAll('.dec').forEach(d => d.onclick = (e) => { e.stopPropagation(); if (found.length<5){ misses++; list(); } toast(d.dataset.d); });
+  sv.onclick = () => { if (found.length<5){ misses++; list(); toast('Здесь нарушений нет — ищите дальше'); } };
+}
+
+/* ----- scenario ----- */
+function mountScenario(b, m){
+  const el = $('#t-'+b.id);
+  let step = 0, errors = 0, log = [], fbMsg = null;
+  const st = S.tasks[b.id];
+  if (st && st.done){ step = b.steps.length; log = b.steps.map(s=>s.opts.find(o=>o[1])[2]); }
+  function draw(){
+    el.classList.toggle('solved', !!(S.tasks[b.id]&&S.tasks[b.id].done));
+    const dots = `<div class="dots">${b.steps.map((_,i)=>`<i class="${i<step?'d':(i===step?'c':'')}"></i>`).join('')}</div>`;
+    let h = `${head('Ситуация', b.id)}<div class="q">${esc(b.q)}</div>${dots}`;
+    h += `<div class="log">${log.map(t=>`<div>✓ ${esc(t)}</div>`).join('')}</div>`;
+    if (step < b.steps.length){
+      const s = b.steps[step];
+      h += `<div class="story"><div class="who">Шаг ${step+1} из ${b.steps.length}</div>${esc(s.text)}</div>
+        <div class="opts">${s.opts.map((o,i)=>`<button class="opt radio" data-i="${i}"><span class="box"></span><span>${esc(o[0])}</span></button>`).join('')}</div>`;
+      if (fbMsg) h += `<div class="fb show no"><b>Не лучший вариант.</b>${esc(fbMsg)} Попробуйте другой.</div>`;
+    } else {
+      h += `<div class="fb show ok"><b>Ситуация разобрана!</b>${errors===0?'Все решения верные с первой попытки.':'Ошибок по ходу: '+errors+'. Главное — теперь вы знаете правильный порядок действий.'}</div>
+        <div class="row"><button class="btn ghost sm" data-act="retry">Пройти ситуацию ещё раз</button></div>`;
+    }
+    el.innerHTML = h;
+    el.querySelectorAll('.opt').forEach(o => o.onclick = () => {
+      const opt = b.steps[step].opts[+o.dataset.i];
+      if (opt[1]){ log.push(opt[2]); step++; fbMsg = null;
+        if (step===b.steps.length){ complete(b.id, errors===0, {}, el.querySelector('.q'), Math.max(4, 10-errors*2)); draw(); updStatus(m); return; }
+      } else { errors++; fbMsg = opt[2]; o.classList.add('wrong'); setTimeout(draw, 350); return; }
+      draw();
+    });
+    const r = el.querySelector('[data-act=retry]'); if (r) r.onclick = () => { step=0; errors=0; log=[]; fbMsg=null; draw(); };
+  }
+  draw();
+}
+
+/* ----- KTS trainer ----- */
+function mountKts(){
+  const el = $('#kts');
+  el.innerHTML = `<div class="tl"><span>Тренажёр</span></div><div class="q">Нажмите на кнопку и посмотрите, что происходит после сигнала</div>
+   <div class="kts" id="ktsBox"><button class="fobbtn" id="fob" aria-label="Нажать КТС">${svg(`
+     <rect x="60" y="20" width="100" height="160" rx="34" fill="${K}"/>
+     <g class="core"><circle cx="110" cy="92" r="36" fill="${A}"/><circle cx="110" cy="92" r="24" fill="${AL}"/></g>
+     <circle class="led" cx="110" cy="152" r="7"/>
+     <path class="wave" d="M176 66 a36 36 0 0 1 0 52"/><path class="wave w2" d="M192 52 a56 56 0 0 1 0 80"/><path class="wave w3" d="M208 38 a76 76 0 0 1 0 108"/>`, '0 0 230 200')}</button>
+   <div class="tline">
+    <div><span class="k">1</span><span>Загорается красный индикатор — сигнал ушёл на пульт</span></div>
+    <div><span class="k">2</span><span>Оператор охраны получает тревогу по номеру объекта</span></div>
+    <div><span class="k">3</span><span>Группа быстрого реагирования выезжает — время зависит от расстояния и пробок</span></div>
+    <div><span class="k">4</span><span>Вы сообщаете руководителю о нажатии</span></div>
+   </div></div>
+   <p class="hint" style="margin:12px 0 0">Поэтому нажимаем заранее — как только почувствовали опасность.</p>`;
+  $('#fob').onclick = () => {
+    const box = $('#ktsBox'); box.classList.remove('go'); void box.offsetWidth; box.classList.add('go');
+    const ls = el.querySelectorAll('.tline div'); ls.forEach(x=>x.classList.remove('on'));
+    ls.forEach((x,i)=>setTimeout(()=>x.classList.add('on'), 400+i*700));
+  };
+}
+
+/* ----- closing checklist ----- */
+function mountChecklist(b){
+  const el = $('#chk');
+  let on = new Set();
+  el.innerHTML = `<div class="tl"><span>Интерактивный чек-лист</span></div><div class="q">Закройте салон: отметьте пункты по порядку</div>
+   <div class="chk"><div>${b.items.map((t,i)=>`<label data-i="${i}"><input type="checkbox" data-i="${i}"><span>${esc(t)}</span></label>`).join('')}</div>
+   <div class="ill">${svg(`
+     <rect x="20" y="20" width="200" height="22" rx="4" fill="${K}"/>
+     <rect x="30" y="42" width="180" height="150" fill="${IV}" stroke="${K}" stroke-width="4"/>
+     <rect x="50" y="110" width="140" height="70" fill="${P}" stroke="${K}" stroke-width="3"/><rect x="50" y="84" width="140" height="26" fill="${SKY}" stroke="${K}" stroke-width="3"/>
+     <clipPath id="cpc"><rect x="30" y="42" width="180" height="150"/></clipPath>
+     <g clip-path="url(#cpc)"><g id="shutter" style="transform:translateY(-150px)">${Array.from({length:13},(_,i)=>`<rect x="30" y="${42+i*12}" width="180" height="12" fill="#9AA0AA" stroke="#7D838E" stroke-width="2"/>`).join('')}</g></g>
+     <circle id="armLed" cx="200" cy="31" r="6" fill="#5b1f18"/>
+     <rect x="10" y="192" width="220" height="8" rx="4" fill="${K}"/>`, '0 0 240 210')}<p class="hint" id="chkTxt" style="text-align:center;margin:8px 0 0">Салон открыт</p></div></div>`;
+  el.querySelectorAll('input').forEach(c => c.onchange = () => {
+    const i = +c.dataset.i;
+    if (c.checked && on.size !== i){ c.checked = false; toast('Отмечайте пункты по порядку — сначала пункт ' + (on.size+1)); return; }
+    if (!c.checked){ for (let k=i;k<b.items.length;k++){ on.delete(k); el.querySelector(`input[data-i="${k}"]`).checked=false; } } else on.add(i);
+    el.querySelectorAll('label').forEach(l => l.classList.toggle('on', on.has(+l.dataset.i)));
+    const frac = on.size / b.items.length;
+    $('#shutter').style.transform = `translateY(${-150 + 150*Math.min(1, on.size/(b.items.length-1))}px)`;
+    $('#armLed').setAttribute('fill', on.size===b.items.length ? '#4CAF7A' : '#5b1f18');
+    $('#chkTxt').textContent = on.size===b.items.length ? 'Салон закрыт и на охране ✓' : (frac>0 ? 'Закрываем…' : 'Салон открыт');
+    if (on.size===b.items.length) toast('Салон закрыт по всем правилам!');
+  });
+}
+
+/* ----- final test ----- */
+let FT = null;
+function renderFinal(){
+  const missing = MODULES.filter(m=>!modDone(m));
+  if (FT) return drawFinalQ();
+  if (!profileOk()){
+    $('#main').innerHTML = `<div class="mod"><div class="mhead"><div><div class="kicker">Итоговый тест</div><h2>Сначала представьтесь</h2><p class="lead">Чтобы результат теста засчитался, укажите на стартовой странице фамилию и имя, сеть и салон.</p></div><div class="ill">${ILL.final}</div></div><div class="row"><button class="btn amber" id="toStart">Заполнить данные</button></div></div>`;
+    $('#toStart').onclick = () => go('start'); return;
+  }
+  let h = `<div class="mod"><div class="mhead"><div><div class="kicker">Итоговый тест</div><h2>Проверьте себя</h2>
+    <p class="lead">${FINAL.length} вопросов в случайном порядке, один правильный ответ в каждом. Для успешного прохождения нужно ответить верно минимум на ${Math.ceil(FINAL.length*PASS)} из ${FINAL.length}.</p></div><div class="ill">${ILL.final}</div></div>`;
+  if (missing.length) h += `<div class="block callout"><b>Рекомендуем сначала пройти модули:</b> ${missing.map(m=>esc(m.title)).join(', ')}. Тест можно начать и сейчас.</div>`;
+  if (S.final) h += resultHTML(S.final);
+  h += `<div class="row"><button class="btn amber" id="ftStart">${S.final?'Пройти тест ещё раз':'Начать тест'}</button></div></div>`;
+  $('#main').innerHTML = h;
+  $('#ftStart').onclick = () => { FT = {order: shuffle(FINAL.map((_,i)=>i)), i:0, answers:[], t0:Date.now()}; drawFinalQ(); };
+}
+function drawFinalQ(){
+  const qi = FT.order[FT.i], q = FINAL[qi];
+  let chosen = null;
+  const oo = shuffle(q.opts.map((_,i)=>i));
+  $('#main').innerHTML = `<div class="mod"><div class="row" style="justify-content:space-between;margin:0"><div class="kicker" style="margin:0">Итоговый тест · вопрос ${FT.i+1} из ${FINAL.length}</div><span class="timer" id="tmr"></span></div>
+    <div class="bar" style="background:var(--line);margin:12px 0 24px"><i style="width:${FT.i/FINAL.length*100}%"></i></div>
+    <div class="task"><div class="q">${esc(q.q)}</div><div class="hint">Выберите один вариант</div>
+    <div class="opts">${oo.map(i=>`<button class="opt radio" data-i="${i}"><span class="box"></span><span>${esc(q.opts[i])}</span></button>`).join('')}</div>
+    <div class="row"><button class="btn" id="ftNext" disabled>${FT.i===FINAL.length-1?'Завершить тест':'Далее →'}</button></div></div></div>`;
+  const tick = () => { const t = $('#tmr'); if (!t || !FT) return; const s = Math.floor((Date.now()-FT.t0)/1000); t.textContent = '⏱ ' + Math.floor(s/60) + ':' + String(s%60).padStart(2,'0'); };
+  tick(); clearInterval(drawFinalQ._iv); drawFinalQ._iv = setInterval(tick, 1000);
+  document.querySelectorAll('.opt').forEach(o => o.onclick = () => {
+    document.querySelectorAll('.opt').forEach(x=>x.classList.remove('sel')); o.classList.add('sel');
+    chosen = +o.dataset.i; $('#ftNext').disabled = false;
+  });
+  $('#ftNext').onclick = () => {
+    FT.answers.push({q:qi, a:chosen}); FT.i++;
+    if (FT.i < FINAL.length) { drawFinalQ(); window.scrollTo(0,0); return; }
+    clearInterval(drawFinalQ._iv);
+    const score = FT.answers.filter(x=>FINAL[x.q].ok===x.a).length;
+    const secs = Math.floor((Date.now()-FT.t0)/1000);
+    const passed = score/FINAL.length >= PASS;
+    const firstPass = passed && !(S.final && S.final.passed);
+    S.final = {score, total:FINAL.length, passed, answers:FT.answers, secs, date:new Date().toLocaleDateString('ru-RU')};
+    FT = null; save();
+    if (firstPass){ S.pts += score*5; save(); }
+    S.attempts = (S.attempts||0) + 1; save();
+    sendEvent('final', {score, total:FINAL.length, passed, secs,
+      answers: S.final.answers.map(x => ({id:x.q, q:FINAL[x.q].q, ok: FINAL[x.q].ok===x.a})),
+      wrongNums: S.final.answers.filter(x => FINAL[x.q].ok!==x.a).map(x => x.q+1).sort((a,b)=>a-b)});
+    renderNav(); renderFinal(); window.scrollTo(0,0);
+  };
+}
+function resultHTML(r){
+  const wrong = r.answers.filter(x=>FINAL[x.q].ok!==x.a);
+  const time = r.secs!=null ? ` · время ${Math.floor(r.secs/60)}:${String(r.secs%60).padStart(2,'0')}` : '';
+  let h = '';
+  if (r.passed){
+    h += `<div class="block cert"><div class="ill">${ILL.final}</div><div class="kicker">Обучение пройдено</div>
+      <div class="score" style="color:var(--ok)">${r.score} / ${r.total}</div>
+      <h3>Стандарты безопасности ювелирного салона</h3>
+      <div class="who">${esc(S.name||'Сотрудник')}</div>
+      <p>${S.brand?'Сеть '+esc(S.brand)+' · ':''}${S.salon?esc(S.salon)+' · ':''}${esc(r.date)}${time} · ★ ${S.pts} баллов</p>
+      ${API_URL?'<p class="status">✓ Результат передан в общую таблицу обучения.</p>':''}
+      <p class="status">Покажите этот экран директору магазина. Следующий шаг — ознакомление с <a href="${DOCS_URL}" target="_blank" rel="noopener">Регламентом №1.1</a> под подпись и практика в салоне.</p></div>`;
+  } else {
+    h += `<div class="block callout" style="border-left-color:var(--bad)"><b style="color:var(--bad)">Тест не пройден: ${r.score} из ${r.total}.</b> Нужно минимум ${Math.ceil(r.total*PASS)}. Повторите модули по вопросам ниже и пройдите тест ещё раз.</div>`;
+  }
+  if (wrong.length){
+    h += `<div class="block"><h3>Разбор ошибок</h3><div class="review">${wrong.map(x=>{const q=FINAL[x.q];return `<div class="r"><b>${esc(q.q)}</b><small>Ваш ответ: ${esc(q.opts[x.a])}</small><small style="color:var(--ok)">Правильно: ${esc(q.opts[q.ok])}</small></div>`;}).join('')}</div></div>`;
+  }
+  return h;
+}
+
+/* ======================= INIT ======================= */
+(function(){ const h = location.hash.slice(1); if (VIEWS.includes(h)) S.view = h; })();
+window.addEventListener('hashchange', () => { const h=location.hash.slice(1); if (VIEWS.includes(h) && h!==S.view){ S.view=h; render(); } });
+render();
+loadSalons();
+flushQueue();
+</script>
+</body>
+</html>
