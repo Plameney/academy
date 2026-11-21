@@ -17,7 +17,7 @@ const P={"s": "cGxhbWVuZXlhLWFjYWRlbXktdjEtc2FsdA==", "i": "+JGA9YW+dce3zo5m", "
 const b64=s=>Uint8Array.from(atob(s),c=>c.charCodeAt(0));const hex=a=>Array.from(a,x=>x.toString(16).padStart(2,'0')).join('');const unhex=h=>new Uint8Array(h.match(/../g).map(x=>parseInt(x,16)));
 async function derive(pw){const k=await crypto.subtle.importKey('raw',new TextEncoder().encode(pw),'PBKDF2',false,['deriveBits']);return new Uint8Array(await crypto.subtle.deriveBits({name:'PBKDF2',hash:'SHA-256',salt:b64(P.s),iterations:P.n},k,256));}
 async function open_(raw){const k=await crypto.subtle.importKey('raw',raw,'AES-GCM',false,['decrypt']);const pt=await crypto.subtle.decrypt({name:'AES-GCM',iv:b64(P.i)},k,b64(P.c));return new TextDecoder().decode(pt);}
-function show(h){document.open();document.write(h);document.close();}
+function show(h){document.open();document.write(h.replace('Пламенея, MUIZ, Sokolov','Пламенея, MIUZ, Sokolov'));document.close();}
 (async()=>{let s=null;try{s=localStorage.getItem(LS)}catch(e){}if(s&&s.startsWith(P.s+':')){try{const h=await open_(unhex(s.split(':')[1]));if(document.readyState!=='complete')await new Promise(r=>window.addEventListener('load',r,{once:true}));show(h);return}catch(e){try{localStorage.removeItem(LS)}catch(_){}}}document.documentElement.className='';})();
 document.getElementById('f').addEventListener('submit',async e=>{e.preventDefault();const b=document.getElementById('go'),er=document.getElementById('err');er.textContent='';b.disabled=true;b.textContent='Проверяю…';
 try{const raw=await derive(document.getElementById('pw').value);const h=await open_(raw);try{localStorage.setItem(LS,P.s+':'+hex(raw))}catch(_){}show(h)}catch(x){er.textContent='Неверный пароль';b.disabled=false;b.textContent='Войти'}});
